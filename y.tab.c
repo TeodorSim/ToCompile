@@ -1827,9 +1827,13 @@ yyreturnlab:
 int errors_occurred = 0;
 
 int yyerror(char * s) {
+    printf("-\\---/\\---/-\n");
+    printf("--\\-/--\\-/--\n");
+    printf("--/-\\--/-\\--\n");
+    printf("-/---\\/---\\-\n");
     errors_occurred++;   
     printf("%s %s %d\n","Syntax ERROR.", ".\nErrors occurred! Current error at line: ", yylineno);
-   // printf("%s\n", s);
+    printf("--------------------------------\n");
 }
 
 int main(int argc, char** argv) {
@@ -1844,8 +1848,10 @@ int main(int argc, char** argv) {
     tabel_fun();
     
     if (errors_occurred == 0) {
-        printf("-------------------------------------------------------------------------\n"); 
-        printf("\n\nNo errors occurred !!! :D \n\n\n"); 
-        printf("-------------------------------------------------------------------------\n"); 
+        printf("------/-\n");
+        printf("-----/--\n");
+        printf("-\\--/---\n");
+        printf("--\\/----\n");
+        printf("input passed.\n");
     }
 };
