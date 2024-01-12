@@ -1,0 +1,11 @@
+int d <- 10;
+int aa <- 100;
+int b <- 15;
+
+float rr;
+float e <- 7.5;
+
+string text <- "asta e";
+char cr <- 'a';
+
+bool f <- "true";

@@ -1,0 +1,9 @@
+Nume:   d   | Tip:   int   | Scope:   GLOBAL   | Valoare:   10  
+ Nume:   aa   | Tip:   int   | Scope:   GLOBAL   | Valoare:   100  
+ Nume:   b   | Tip:   int   | Scope:   GLOBAL   | Valoare:   15  
+ Nume:   rr   | Tip:   float   | Scope:   GLOBAL   | Neinitializata  
+ Nume:   e   | Tip:   float   | Scope:   GLOBAL   | Valoare:   7.500000  
+ Nume:   text   | Tip:   string   | Scope:   GLOBAL   | Valoare:   "asta e"  
+ Nume:   cr   | Tip:   char   | Scope:   GLOBAL   | Valoare:   'a'  
+ Nume:   f   | Tip:   bool   | Scope:   GLOBAL   | Valoare:   false 
+ 
