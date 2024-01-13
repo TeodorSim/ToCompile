@@ -2,13 +2,16 @@ int d <- 10;
 int aa <- 100;
 int b <- 15;
 
-float rr;
 float e <- 7.5;
-
+float rr <- e;
 string text <- "asta e";
-char cr <- 'a';
-char cr;
+char c <- 'a';
+char m <- c;
 
 bool f <- "true";
 
-char cr;
+
+int vctor[10];
+int lector[1];
+char abc[3];
+char abcdc <- abc;

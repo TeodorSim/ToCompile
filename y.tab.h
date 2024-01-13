@@ -179,7 +179,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 219 "fis.y"
+#line 280 "fis.y"
 
   int intTyp;
   float floatTyp;
