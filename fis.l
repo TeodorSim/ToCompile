@@ -1,5 +1,5 @@
 %{
-#include <stdio.h>
+#include <cstdio>
 #include "y.tab.h" // generat de yacc - defineste lista de token-uri folosite
 %}
 

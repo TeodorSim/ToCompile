@@ -1,16 +1,9 @@
 %{
-    /*
 #include <cstdio>
+#include <cstdbool>
 #include <cstring>
 #include <cstdlib>
 #include <cmath>
-*/
-
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
 
 #define GLOBAL 0
 #define MAIN 1
@@ -22,9 +15,11 @@
 #define VECTOR_DIMENSION 100
 #define STRING_DIMENSION 256
 
+extern int yylex(void);
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
+void yyerror(char *);
 
   struct simboluri {
 	char nume[STRING_DIMENSION];//NUME
@@ -385,13 +380,13 @@ INSTRUCTIUNE:
         } 
         else {
             printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         }
     |vartype IDENTIF ASSIGN INT_NUM{
         if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -402,7 +397,7 @@ INSTRUCTIUNE:
     |vartype IDENTIF ASSIGN REAL_NUM{
          if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -413,11 +408,11 @@ INSTRUCTIUNE:
     |vartype IDENTIF ASSIGN CHAR_VAL{
         if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else if(strlen($4)!=3){
             printf("Tipul de date accepta un caracter, nu un string. Erroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
         }
         else{
             declarare($2, $1, global, 0);
@@ -430,7 +425,7 @@ INSTRUCTIUNE:
     | vartype IDENTIF ASSIGN STRING_VAL{
          if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -441,7 +436,7 @@ INSTRUCTIUNE:
     | vartype IDENTIF ASSIGN BOOL_VAL{
        if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -583,7 +578,7 @@ VARARG: INT_NUM
 
 int errors_occurred = 0;
 
-int yyerror(char * s) {
+void yyerror(char * s) {
     printf("-\\---/\\---/-\n");
     printf("--\\-/--\\-/--\n");
     printf("--/-\\--/-\\--\n");

@@ -9,5 +9,5 @@ rm -f lex.yy.c
 rm -f $1
 yacc -d $1.y
 flex $1.l
-gcc lex.yy.c y.tab.c -o $1
+g++ lex.yy.c y.tab.c -o $1
 
