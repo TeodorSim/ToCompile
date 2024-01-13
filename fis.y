@@ -248,7 +248,7 @@ void initializareINT(char nume[], int val)
     }
 }
 void initializareINTarray(char numer[], int val, int position){
-    int k=verifdecl(nume);
+    int k=verifdecl(numer);
     if(k!=-1)
     {
         Simb[k].init=1;
@@ -530,34 +530,7 @@ INSTRUCTIUNE:
             }
         global = 0;
         }
-    | vartype IDENTIF '[' INT_NUM ']' ASSIGN INT_NUM{
-        if(verifdecl($2)!=-1){
-            printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", $2,  yylineno);
-            yyerror();
-        }
-        else{
-            if(verifinit($4)==-1){
-                printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", $4, yylineno);
-                yyerror();
-                }
-            else{
-                /* verificare variabilele sunt de acelasi tip */
-                char tip_var_second[100];
-                getTyp($4, tip_var_second);
-                //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
-                if(strcmp($1, tip_var_second)!=0){
-                    printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
-                    yyerror();
-                    }
-                else{
-                    /* declarare variabila $1 */
-                    declarare($2, $1, global, 0);
-                    copyVal($2, $4);
-                    }
-                }
-            }
-        global = 0;
-        }
+    | vartype IDENTIF '[' INT_NUM ']' ASSIGN INT_NUM{}
     | vartype IDENTIF '[' IDENTIF ']' ASSIGN REAL_NUM{
         }
     | vartype IDENTIF '[' IDENTIF ']' ASSIGN CHAR_VAL{

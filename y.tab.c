@@ -89,23 +89,31 @@
 #define true 1
 #define false 0
 
+#define VECTOR_DIMENSION 100
+#define STRING_DIMENSION 256
+
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
 
   struct simboluri {
-	char nume[100];//NUME
-	char typ[50];//TIP
+	char nume[STRING_DIMENSION];//NUME
+	char typ[STRING_DIMENSION];//TIP
 	int global;//LOCATIE_VAR  
 	int costant;//CONSTANT
 	int init;// daca variabila are valoare
 	int intVal; //VALOARE
 	float floatVal;//VALOARE
 	char charVal[3];//VALOARE -> 'a'
-	char stingVal[256];//VALOARE
-	int vectorIntVal[100];//VALOARE
-	float vectorFloatVal[100];//VALOARE
     int boolVal;//BOOL VALOARE
+    
+    /* arrays */
+	char stingVal[STRING_DIMENSION];//VALOARE
+    int stingVal_occupied;//positioa pana la care sunt valori in string stingVal
+	int vectorIntVal[VECTOR_DIMENSION];//VALOARE
+    int vectorIntVal_occupied;//positia pana la care sunt valori in vectorul vectorIntVal
+	float vectorFloatVal[VECTOR_DIMENSION];//VALOARE
+    int vectorFloatVal_occupied;//positia pana la care sunt valori in vectorul vectorFloatVal
 } Simb[256];
 
 
@@ -220,6 +228,12 @@ void declarare(char dnume[], char dtyp[], int dglobal, int dconstant)
     Simb[nrSimb].floatVal= -1;
     strcpy(Simb[nrSimb].charVal , "");
     strcpy(Simb[nrSimb].stingVal , "");
+    Simb[nrSimb].vectorIntVal_occupied = 0;
+    Simb[nrSimb].vectorFloatVal_occupied = 0;
+    for(int i = 0; i< VECTOR_DIMENSION; i++){
+        Simb[nrSimb].vectorIntVal_occupied = 0;
+        Simb[nrSimb].vectorFloatVal_occupied = 0;
+    }
 }
 
 // varificam daca o variabila a fost declarata
@@ -303,6 +317,17 @@ void initializareINT(char nume[], int val)
         Simb[k].intVal=val;
     }
 }
+void initializareINTarray(char numer[], int val, int position){
+    int k=verifdecl(numer);
+    if(k!=-1)
+    {
+        Simb[k].init=1;
+        Simb[k].vectorIntVal[position] = val;
+        if(position > Simb[k].vectorIntVal_occupied){
+             Simb[k].vectorIntVal_occupied = position;
+        }
+    } 
+}
 void initializareFLOAT(char nume[], float val)
 {
     int k=verifdecl(nume);
@@ -346,7 +371,7 @@ void initializareBOOL(char nume[], char val[])
     }
 }
 
-#line 350 "y.tab.c"
+#line 375 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -515,7 +540,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 280 "fis.y"
+#line 305 "fis.y"
 
   int intTyp;
   float floatTyp;
@@ -527,7 +552,7 @@ union YYSTYPE
   struct node *astval;
   char* boolTyp;
 
-#line 531 "y.tab.c"
+#line 556 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -957,9 +982,9 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  17
+#define YYNRULES  24
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  23
+#define YYNSTATES  36
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   313
@@ -1014,8 +1039,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   323,   323,   324,   325,   326,   327,   352,   353,   357,
-     366,   377,   388,   405,   416,   427,   461,   474
+       0,   348,   348,   349,   350,   351,   352,   377,   378,   382,
+     391,   402,   413,   430,   441,   452,   486,   499,   533,   534,
+     536,   538,   540,   542,   544
 };
 #endif
 
@@ -1051,7 +1077,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-63)
+#define YYPACT_NINF (-56)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -1065,9 +1091,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -38,   -63,   -63,   -63,   -63,   -63,   -44,     0,   -62,   -63,
-      -9,   -63,   -60,   -63,   -45,   -63,   -63,   -63,   -63,   -63,
-     -63,   -63,   -63
+     -28,   -56,   -56,   -56,   -56,   -56,   -42,     0,   -55,   -56,
+     -17,   -56,   -53,   -56,   -44,   -34,   -56,   -56,   -56,   -56,
+     -56,   -56,   -56,   -56,   -49,   -48,     3,     4,   -24,   -38,
+     -56,   -56,   -56,   -56,   -56,   -56
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -1075,15 +1102,16 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     2,     4,     3,     6,     5,     0,     0,     0,    16,
-       9,     1,     0,     7,     0,     8,    14,    10,    11,    12,
-      13,    17,    15
+      24,     2,     4,     3,     6,     5,     0,    24,     0,    16,
+       9,     1,     0,     7,     0,     0,     8,    14,    10,    11,
+      12,    13,    17,    15,     0,     0,     0,     0,     0,     0,
+      18,    22,    19,    20,    21,    23
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -63,   -63,   -63,     4
+     -56,   -56,   -56,    23
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -1097,21 +1125,21 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      11,    16,    17,    18,    19,    20,    21,     9,    13,    14,
-      15,    12,     0,    22,    10,     1,     2,     3,     4,     5,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      11,    14,    17,    18,    19,    20,    21,    22,    31,     9,
+      32,    33,    34,    24,    23,    13,    10,    16,    26,    27,
+      35,    28,    29,    30,    25,     1,     2,     3,     4,     5,
+      12,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    15,
        0,     0,     0,     1,     2,     3,     4,     5
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,    46,    47,    48,    49,    50,    51,    51,    70,    18,
-      70,     7,    -1,    58,    58,    53,    54,    55,    56,    57,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+       0,    18,    46,    47,    48,    49,    50,    51,    46,    51,
+      48,    49,    50,    47,    58,    70,    58,    70,    67,    67,
+      58,    18,    18,    47,    58,    53,    54,    55,    56,    57,
+       7,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    66,
       -1,    -1,    -1,    53,    54,    55,    56,    57
 };
 
@@ -1120,22 +1148,25 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,    53,    54,    55,    56,    57,    73,    74,    75,    51,
-      58,     0,    75,    70,    18,    70,    46,    47,    48,    49,
-      50,    51,    58
+      58,     0,    75,    70,    18,    66,    70,    46,    47,    48,
+      49,    50,    51,    58,    47,    58,    67,    67,    18,    18,
+      47,    46,    48,    49,    50,    58
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    72,    73,    73,    73,    73,    73,    74,    74,    75,
-      75,    75,    75,    75,    75,    75,    75,    75
+      75,    75,    75,    75,    75,    75,    75,    75,    75,    75,
+      75,    75,    75,    75,    75
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     1,     1,     1,     2,     3,     2,
-       4,     4,     4,     4,     4,     4,     2,     4
+       4,     4,     4,     4,     4,     4,     2,     4,     7,     7,
+       7,     7,     7,     7,     0
 };
 
 
@@ -1599,7 +1630,7 @@ yyreduce:
   switch (yyn)
     {
   case 9: /* INSTRUCTIUNE: vartype IDENTIF  */
-#line 357 "fis.y"
+#line 382 "fis.y"
                     {
         if(verifdecl((yyvsp[0].dataTyp))== -1){
             declarare((yyvsp[0].dataTyp), (yyvsp[-1].dataTyp),global,0);
@@ -1609,11 +1640,11 @@ yyreduce:
             yyerror();
             }
         }
-#line 1613 "y.tab.c"
+#line 1644 "y.tab.c"
     break;
 
   case 10: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN INT_NUM  */
-#line 366 "fis.y"
+#line 391 "fis.y"
                                    {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1625,11 +1656,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1629 "y.tab.c"
+#line 1660 "y.tab.c"
     break;
 
   case 11: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN REAL_NUM  */
-#line 377 "fis.y"
+#line 402 "fis.y"
                                     {
          if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1641,11 +1672,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1645 "y.tab.c"
+#line 1676 "y.tab.c"
     break;
 
   case 12: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN CHAR_VAL  */
-#line 388 "fis.y"
+#line 413 "fis.y"
                                     {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1663,11 +1694,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1667 "y.tab.c"
+#line 1698 "y.tab.c"
     break;
 
   case 13: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN STRING_VAL  */
-#line 405 "fis.y"
+#line 430 "fis.y"
                                        {
          if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1679,11 +1710,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1683 "y.tab.c"
+#line 1714 "y.tab.c"
     break;
 
   case 14: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN BOOL_VAL  */
-#line 416 "fis.y"
+#line 441 "fis.y"
                                      {
        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1695,11 +1726,11 @@ yyreduce:
             } 
         global = 0;
         }
-#line 1699 "y.tab.c"
+#line 1730 "y.tab.c"
     break;
 
   case 15: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN IDENTIF  */
-#line 427 "fis.y"
+#line 452 "fis.y"
                                     {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
@@ -1734,11 +1765,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1738 "y.tab.c"
+#line 1769 "y.tab.c"
     break;
 
   case 16: /* INSTRUCTIUNE: vartype ARRAY_IDENTIF  */
-#line 461 "fis.y"
+#line 486 "fis.y"
                            {
         if(verifdecl((yyvsp[0].arrayTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1752,11 +1783,11 @@ yyreduce:
             declarare((yyvsp[0].arrayTyp), to_hold, global, 0);
             } 
         }
-#line 1756 "y.tab.c"
+#line 1787 "y.tab.c"
     break;
 
   case 17: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN ARRAY_IDENTIF  */
-#line 474 "fis.y"
+#line 499 "fis.y"
                                           {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
@@ -1791,11 +1822,52 @@ yyreduce:
             }
         global = 0;
         }
-#line 1795 "y.tab.c"
+#line 1826 "y.tab.c"
+    break;
+
+  case 18: /* INSTRUCTIUNE: vartype IDENTIF '[' INT_NUM ']' ASSIGN INT_NUM  */
+#line 533 "fis.y"
+                                                    {}
+#line 1832 "y.tab.c"
+    break;
+
+  case 19: /* INSTRUCTIUNE: vartype IDENTIF '[' IDENTIF ']' ASSIGN REAL_NUM  */
+#line 534 "fis.y"
+                                                     {
+        }
+#line 1839 "y.tab.c"
+    break;
+
+  case 20: /* INSTRUCTIUNE: vartype IDENTIF '[' IDENTIF ']' ASSIGN CHAR_VAL  */
+#line 536 "fis.y"
+                                                     {
+        }
+#line 1846 "y.tab.c"
+    break;
+
+  case 21: /* INSTRUCTIUNE: vartype IDENTIF '[' IDENTIF ']' ASSIGN STRING_VAL  */
+#line 538 "fis.y"
+                                                       {
+        }
+#line 1853 "y.tab.c"
+    break;
+
+  case 22: /* INSTRUCTIUNE: vartype IDENTIF '[' IDENTIF ']' ASSIGN BOOL_VAL  */
+#line 540 "fis.y"
+                                                     {
+        }
+#line 1860 "y.tab.c"
+    break;
+
+  case 23: /* INSTRUCTIUNE: vartype IDENTIF '[' IDENTIF ']' ASSIGN IDENTIF  */
+#line 542 "fis.y"
+                                                    {
+        }
+#line 1867 "y.tab.c"
     break;
 
 
-#line 1799 "y.tab.c"
+#line 1871 "y.tab.c"
 
       default: break;
     }
@@ -1988,7 +2060,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 545 "fis.y"
+#line 582 "fis.y"
 
 
 int errors_occurred = 0;

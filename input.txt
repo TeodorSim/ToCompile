@@ -14,4 +14,3 @@ bool f <- "true";
 int vctor[10];
 int lector[1];
 char abc[3];
-char abcdc <- abc;
