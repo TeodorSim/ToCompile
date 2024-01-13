@@ -574,7 +574,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "fis.l"
 #line 2 "fis.l"
-#include <stdio.h>
+#include <cstdio>
 #include "y.tab.h" // generat de yacc - defineste lista de token-uri folosite
 #line 580 "lex.yy.c"
 #line 581 "lex.yy.c"

@@ -380,13 +380,13 @@ INSTRUCTIUNE:
         } 
         else {
             printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
-            yyerror("eroare");
+            //yyerror("eroare");
             }
         }
     |vartype IDENTIF ASSIGN INT_NUM{
         if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror("eroare");
+            //yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -397,7 +397,7 @@ INSTRUCTIUNE:
     |vartype IDENTIF ASSIGN REAL_NUM{
          if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror("eroare");
+            //yyerror("eroare");
             }
         else{
             declarare($2, $1, global, 0);
@@ -447,17 +447,17 @@ INSTRUCTIUNE:
     | vartype IDENTIF ASSIGN IDENTIF{
         if(verifdecl($2)!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", $2,  yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             if(verifdecl($4)==-1){
                 printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $4,  yylineno);
-                yyerror();
+                yyerror("eroare");
                 }
             else{
                 if(verifinit($4)==-1){
                     printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", $4, yylineno);
-                    yyerror();
+                    yyerror("eroare");
                     }
                 else{
                     /* verificare variabilele sunt de acelasi tip */
@@ -466,7 +466,7 @@ INSTRUCTIUNE:
                     //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
                     if(strcmp($1, tip_var_second)!=0){
                         printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
-                        yyerror();
+                        yyerror("eroare");
                         }
                     else{
                         /* declarare variabila $1 */
@@ -481,7 +481,7 @@ INSTRUCTIUNE:
     | vartype ARRAY_IDENTIF{
         if(verifdecl($2)!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             /* spatiu pt vector */
@@ -494,17 +494,17 @@ INSTRUCTIUNE:
     | vartype IDENTIF ASSIGN ARRAY_IDENTIF{
         if(verifdecl($2)!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", $2,  yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         else{
             if(verifdecl($4)==-1){
                 printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $4,  yylineno);
-                yyerror();
+                yyerror("eroare");
                 }
             else{
                 if(verifinit($4)==-1){
                     printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", $4, yylineno);
-                    yyerror();
+                    yyerror("eroare");
                     }
                 else{
                     /* verificare variabilele sunt de acelasi tip */
@@ -513,7 +513,7 @@ INSTRUCTIUNE:
                     //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
                     if(strcmp($1, tip_var_second)!=0){
                         printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
-                        yyerror();
+                        yyerror("eroare");
                         }
                     else{
                         /* declarare variabila $1 */
@@ -525,18 +525,6 @@ INSTRUCTIUNE:
             }
         global = 0;
         }
-    | vartype IDENTIF '[' INT_NUM ']' ASSIGN INT_NUM{}
-    | vartype IDENTIF '[' IDENTIF ']' ASSIGN REAL_NUM{
-        }
-    | vartype IDENTIF '[' IDENTIF ']' ASSIGN CHAR_VAL{
-        }
-    | vartype IDENTIF '[' IDENTIF ']' ASSIGN STRING_VAL{
-        }
-    | vartype IDENTIF '[' IDENTIF ']' ASSIGN BOOL_VAL{
-        }
-    | vartype IDENTIF '[' IDENTIF ']' ASSIGN IDENTIF{
-        }
-    |
     ;
 
 
@@ -549,12 +537,12 @@ VARARG: INT_NUM
       | IDENTIF {
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
-            yyerror();}
+            yyerror("eroare");}
             }
       | ARRAY_IDENTIF {
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
-            yyerror();}
+            yyerror("eroare");}
         } 
       | VARARG ',' INT_NUM
       | VARARG ',' REAL_NUM
@@ -563,13 +551,13 @@ VARARG: INT_NUM
       | VARARG ',' IDENTIF {
         if(verifdecl($3)==-1){
             printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         }
       | VARARG ',' ARRAY_IDENTIF {
         if(verifdecl($3)==-1){
             printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
-            yyerror();
+            yyerror("eroare");
             }
         }
       |/*null*/
@@ -584,7 +572,8 @@ void yyerror(char * s) {
     printf("--/-\\--/-\\--\n");
     printf("-/---\\/---\\-\n");
     errors_occurred++;   
-    printf("%s %s %d\n","Syntax ERROR.", ".\nErrors occurred! Current error at line: ", yylineno);
+    printf("message: %s\n", s);
+    printf("%s %s %d\n","Syntax ERROR.", "\nErrors occurred! Current error at line: ", yylineno);
     printf("--------------------------------\n");
 }
 

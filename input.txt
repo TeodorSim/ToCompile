@@ -1,4 +1,4 @@
-int d <- 10;
+int d;
 int aa <- 100;
 int b <- 15;
 
