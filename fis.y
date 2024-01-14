@@ -63,6 +63,12 @@ int nrFun=0; // nr de functii descrise
 int nrSimb=0;// variabila va nr cate simboluri au fost declarate
 int nrparametrii[50]={0};
 int global =0; // 0- global 1- main 2 - scope functii
+struct{
+    int nrSimb;
+    bool activ;
+} inside_struct;
+//inside_struct.activ=true - varibila e parte dins struct
+//inside_struct.activ=true - varibila nu e parte dins struct
 int nrf=0 ;// pe asocierea parametrilor
 FILE* tabel;
 FILE* tabel2;
@@ -159,6 +165,21 @@ void declarare(char dnume[], char dtyp[], int dglobal, int dconstant)
         Simb[nrSimb].vectorIntVal_occupied = 0;
         Simb[nrSimb].vectorFloatVal_occupied = 0;
     }
+    if(strcmp(dtyp, "structure")==0 && inside_struct.nrSimb != -1){
+        //reiteram in tabelul de simboluri pentru a modifca numele variabilelor din struct
+        int copie_nrSimb = nrSimb - 1; // fara variabila curenta
+        while(copie_nrSimb >= inside_struct.nrSimb){
+            //structNume.variabilaInternaNume;
+            char copie_nume[STRING_DIMENSION];
+            strcpy(copie_nume, dnume);
+            strcat(copie_nume, ".");
+            strcat(copie_nume, Simb[copie_nrSimb].nume);
+            strcpy(Simb[copie_nrSimb].nume, copie_nume);
+            copie_nrSimb--;
+        }
+    }
+    inside_struct.activ = false;
+    inside_struct.nrSimb = -1;
 }
 
 // varificam daca o variabila a fost declarata
@@ -309,7 +330,7 @@ void initializareBOOL(char nume[], char val[])
   char* boolTyp;
 }
 
-%token  CONSTANT EVAL STRUCTURE CLASS TYPEOF TREQQ CLASS_TYP BGIN END IF ELSE WHILE FOR DO RETURN ASSIGN LESS LESSEQ GRT GRTEQ EQ NOT AND OR PLUS MINUS DIV MULTIP MOD LBRACES RBRACES LPAR RPAR LBRACKET RBRACKET POINT SINGLE_QUOTES COMMA SEMI_COLLON PRINT PRIVAT PUBLIC PROTECTED 
+%token  CONSTANT EVAL STRUCTURE CLASS TYPEOF TREQQ CLASS_TYP OPEN_PRTHS CLOSE_PRTHS BGIN END IF ELSE WHILE FOR DO RETURN ASSIGN LESS LESSEQ GRT GRTEQ EQ NOT AND OR PLUS MINUS DIV MULTIP MOD LBRACES RBRACES LPAR RPAR LBRACKET RBRACKET POINT SINGLE_QUOTES COMMA SEMI_COLLON PRINT PRIVAT PUBLIC PROTECTED 
 
 %type <dataTyp> vartype
 %type <intTyp> EXPRESIE EXPRESII
@@ -336,7 +357,7 @@ void initializareBOOL(char nume[], char val[])
 %left '{' '}' '[' ']' '(' ')' 
 
 //------
-%start INSTRUCTIUNI // simbolul de start a gramaticii
+%start PROGRAM // simbolul de start a gramaticii
 //------
 %%
 
@@ -369,12 +390,218 @@ EXPRESIE : EXPRESIE  '+' EXPRESIE  {
         }
  ;
 
+PROGRAM: DECLARATII BGIN BLOC END
+    | STRUCTURI BLOC END
+    | STRUCTURI DECLARATII BGIN BLOC END
+    | DECLARATII STRUCTURI BGIN BLOC END
+    ;
+
+
+//---------------------------------------------------------------
+//bloc de functie
+BLOC: INSTRUCTIUNI;
+
 INSTRUCTIUNI: INSTRUCTIUNE ';'
 	    | INSTRUCTIUNI INSTRUCTIUNE ';'
 ;
 
 INSTRUCTIUNE: 
     vartype IDENTIF {
+        global = 1;
+        if(verifdecl($2)== -1){
+            declarare($2, $1,global,0);
+        } 
+        else {
+            printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        }
+    |vartype IDENTIF ASSIGN INT_NUM{
+        global = 1;
+        if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        else{
+            declarare($2, $1, global, 0);
+            initializareINT($2, $4);
+            }
+        global = 0;
+        }
+    |vartype IDENTIF ASSIGN REAL_NUM{
+        global = 1;
+         if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        else{
+            declarare($2, $1, global, 0);
+            initializareFLOAT($2, $4);
+            }
+        global = 0;
+        }
+    |vartype IDENTIF ASSIGN CHAR_VAL{
+        global = 1;
+        if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else if(strlen($4)!=3){
+            printf("Tipul de date accepta un caracter, nu un string. Erroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+        }
+        else{
+            declarare($2, $1, global, 0);
+            //printf("vartype IDENTIF ASSIGN CHAR_VAL are char_val: %s\n", $4 );
+            initializareCHAR($2, $4);
+           // printf("vartype IDENTIF ASSIGN CHAR_VA() pt Simb[%d].charVal: '%s'.\n", 7,Simb[7].charVal );
+            }
+        global = 0;
+        }
+    | vartype IDENTIF ASSIGN STRING_VAL{
+        global = 1;
+         if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            declarare($2, $1, global, 0);
+            initializareSTRING($2, $4);
+            }
+        global = 0;
+        }
+    | vartype IDENTIF ASSIGN BOOL_VAL{
+        global = 1;
+       if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            declarare($2, $1, global, 0);
+            initializareBOOL($2, $4);
+            } 
+        global = 0;
+        }
+    | vartype IDENTIF ASSIGN IDENTIF{
+        global = 1;
+        if(verifdecl($2)!=-1){
+            printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", $2,  yylineno);
+            yyerror("eroare");
+            }
+        else{
+            if(verifdecl($4)==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $4,  yylineno);
+                yyerror("eroare");
+                }
+            else{
+                if(verifinit($4)==-1){
+                    printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", $4, yylineno);
+                    yyerror("eroare");
+                    }
+                else{
+                    /* verificare variabilele sunt de acelasi tip */
+                    char tip_var_second[100];
+                    getTyp($4, tip_var_second);
+                    //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
+                    if(strcmp($1, tip_var_second)!=0){
+                        printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
+                        yyerror("eroare");
+                        }
+                    else{
+                        /* declarare variabila $1 */
+                        declarare($2, $1, global, 0);
+                        copyVal($2, $4);
+                        }
+                    }
+                }
+            }
+        global = 0;
+        }
+    | vartype ARRAY_IDENTIF{
+        global = 1;
+        if(verifdecl($2)!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            /* spatiu pt vector */
+            char to_hold[100];
+            strcpy(to_hold, $1);
+            strcat(to_hold, " vector");
+            declarare($2, to_hold, global, 0);
+            } 
+        }
+    | vartype IDENTIF ASSIGN ARRAY_IDENTIF{
+        global = 1;
+        if(verifdecl($2)!=-1){
+            printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", $2,  yylineno);
+            yyerror("eroare");
+            }
+        else{
+            if(verifdecl($4)==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $4,  yylineno);
+                yyerror("eroare");
+                }
+            else{
+                if(verifinit($4)==-1){
+                    printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", $4, yylineno);
+                    yyerror("eroare");
+                    }
+                else{
+                    /* verificare variabilele sunt de acelasi tip */
+                    char tip_var_second[100];
+                    getTyp($4, tip_var_second);
+                    //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
+                    if(strcmp($1, tip_var_second)!=0){
+                        printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
+                        yyerror("eroare");
+                        }
+                    else{
+                        /* declarare variabila $1 */
+                        declarare($2, $1, global, 0);
+                        copyVal($2, $4);
+                        }
+                    }
+                }
+            }
+        global = 0;
+        }
+    ;
+
+//---------------------------------------------------------------
+//struct type
+STRUCTURI: STRUCTURA ';'
+    | STRUCTURI STRUCTURA ';'
+//structure { decl; } a;
+STRUCTURA: 
+STRUCTURE '{' DECLARATII_IN_STRUCT '}' IDENTIF {
+            if(verifdecl($5)== -1){
+                declarare($5, "structure", global, 0);
+                //resetam pt ca terminam apelul de struct
+                inside_struct.activ = false;
+                inside_struct.nrSimb = 0;
+            }
+            else{
+                printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
+            }
+        }
+    ;
+
+DECLARATII_IN_STRUCT: 
+    DECLARATII{
+        //save the position where the struct starts
+        inside_struct.activ = true;
+        inside_struct.nrSimb = nrSimb+1;
+    }
+;
+//---------------------------------------------------------------
+	
+DECLARATII : DECLARATIE ';' 
+| DECLARATII DECLARATIE ';'
+;
+
+DECLARATIE: 
+     vartype IDENTIF {
         if(verifdecl($2)== -1){
             declarare($2, $1,global,0);
         } 
@@ -525,9 +752,8 @@ INSTRUCTIUNE:
             }
         global = 0;
         }
+    |
     ;
-
-
 
 VARARG: INT_NUM
       | REAL_NUM

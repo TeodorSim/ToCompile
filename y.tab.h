@@ -61,55 +61,57 @@ extern int yydebug;
     TYPEOF = 262,                  /* TYPEOF  */
     TREQQ = 263,                   /* TREQQ  */
     CLASS_TYP = 264,               /* CLASS_TYP  */
-    BGIN = 265,                    /* BGIN  */
-    END = 266,                     /* END  */
-    IF = 267,                      /* IF  */
-    ELSE = 268,                    /* ELSE  */
-    WHILE = 269,                   /* WHILE  */
-    FOR = 270,                     /* FOR  */
-    DO = 271,                      /* DO  */
-    RETURN = 272,                  /* RETURN  */
-    ASSIGN = 273,                  /* ASSIGN  */
-    LESS = 274,                    /* LESS  */
-    LESSEQ = 275,                  /* LESSEQ  */
-    GRT = 276,                     /* GRT  */
-    GRTEQ = 277,                   /* GRTEQ  */
-    EQ = 278,                      /* EQ  */
-    NOT = 279,                     /* NOT  */
-    AND = 280,                     /* AND  */
-    OR = 281,                      /* OR  */
-    PLUS = 282,                    /* PLUS  */
-    MINUS = 283,                   /* MINUS  */
-    DIV = 284,                     /* DIV  */
-    MULTIP = 285,                  /* MULTIP  */
-    MOD = 286,                     /* MOD  */
-    LBRACES = 287,                 /* LBRACES  */
-    RBRACES = 288,                 /* RBRACES  */
-    LPAR = 289,                    /* LPAR  */
-    RPAR = 290,                    /* RPAR  */
-    LBRACKET = 291,                /* LBRACKET  */
-    RBRACKET = 292,                /* RBRACKET  */
-    POINT = 293,                   /* POINT  */
-    SINGLE_QUOTES = 294,           /* SINGLE_QUOTES  */
-    COMMA = 295,                   /* COMMA  */
-    SEMI_COLLON = 296,             /* SEMI_COLLON  */
-    PRINT = 297,                   /* PRINT  */
-    PRIVAT = 298,                  /* PRIVAT  */
-    PUBLIC = 299,                  /* PUBLIC  */
-    PROTECTED = 300,               /* PROTECTED  */
-    BOOL_VAL = 301,                /* BOOL_VAL  */
-    INT_NUM = 302,                 /* INT_NUM  */
-    REAL_NUM = 303,                /* REAL_NUM  */
-    CHAR_VAL = 304,                /* CHAR_VAL  */
-    STRING_VAL = 305,              /* STRING_VAL  */
-    ARRAY_IDENTIF = 306,           /* ARRAY_IDENTIF  */
-    VOID = 307,                    /* VOID  */
-    INT = 308,                     /* INT  */
-    FLOAT = 309,                   /* FLOAT  */
-    CHAR = 310,                    /* CHAR  */
-    STRING = 311,                  /* STRING  */
-    BOOL = 312,                    /* BOOL  */
-    IDENTIF = 313                  /* IDENTIF  */
+    OPEN_PRTHS = 265,              /* OPEN_PRTHS  */
+    CLOSE_PRTHS = 266,             /* CLOSE_PRTHS  */
+    BGIN = 267,                    /* BGIN  */
+    END = 268,                     /* END  */
+    IF = 269,                      /* IF  */
+    ELSE = 270,                    /* ELSE  */
+    WHILE = 271,                   /* WHILE  */
+    FOR = 272,                     /* FOR  */
+    DO = 273,                      /* DO  */
+    RETURN = 274,                  /* RETURN  */
+    ASSIGN = 275,                  /* ASSIGN  */
+    LESS = 276,                    /* LESS  */
+    LESSEQ = 277,                  /* LESSEQ  */
+    GRT = 278,                     /* GRT  */
+    GRTEQ = 279,                   /* GRTEQ  */
+    EQ = 280,                      /* EQ  */
+    NOT = 281,                     /* NOT  */
+    AND = 282,                     /* AND  */
+    OR = 283,                      /* OR  */
+    PLUS = 284,                    /* PLUS  */
+    MINUS = 285,                   /* MINUS  */
+    DIV = 286,                     /* DIV  */
+    MULTIP = 287,                  /* MULTIP  */
+    MOD = 288,                     /* MOD  */
+    LBRACES = 289,                 /* LBRACES  */
+    RBRACES = 290,                 /* RBRACES  */
+    LPAR = 291,                    /* LPAR  */
+    RPAR = 292,                    /* RPAR  */
+    LBRACKET = 293,                /* LBRACKET  */
+    RBRACKET = 294,                /* RBRACKET  */
+    POINT = 295,                   /* POINT  */
+    SINGLE_QUOTES = 296,           /* SINGLE_QUOTES  */
+    COMMA = 297,                   /* COMMA  */
+    SEMI_COLLON = 298,             /* SEMI_COLLON  */
+    PRINT = 299,                   /* PRINT  */
+    PRIVAT = 300,                  /* PRIVAT  */
+    PUBLIC = 301,                  /* PUBLIC  */
+    PROTECTED = 302,               /* PROTECTED  */
+    BOOL_VAL = 303,                /* BOOL_VAL  */
+    INT_NUM = 304,                 /* INT_NUM  */
+    REAL_NUM = 305,                /* REAL_NUM  */
+    CHAR_VAL = 306,                /* CHAR_VAL  */
+    STRING_VAL = 307,              /* STRING_VAL  */
+    ARRAY_IDENTIF = 308,           /* ARRAY_IDENTIF  */
+    VOID = 309,                    /* VOID  */
+    INT = 310,                     /* INT  */
+    FLOAT = 311,                   /* FLOAT  */
+    CHAR = 312,                    /* CHAR  */
+    STRING = 313,                  /* STRING  */
+    BOOL = 314,                    /* BOOL  */
+    IDENTIF = 315                  /* IDENTIF  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -125,61 +127,63 @@ extern int yydebug;
 #define TYPEOF 262
 #define TREQQ 263
 #define CLASS_TYP 264
-#define BGIN 265
-#define END 266
-#define IF 267
-#define ELSE 268
-#define WHILE 269
-#define FOR 270
-#define DO 271
-#define RETURN 272
-#define ASSIGN 273
-#define LESS 274
-#define LESSEQ 275
-#define GRT 276
-#define GRTEQ 277
-#define EQ 278
-#define NOT 279
-#define AND 280
-#define OR 281
-#define PLUS 282
-#define MINUS 283
-#define DIV 284
-#define MULTIP 285
-#define MOD 286
-#define LBRACES 287
-#define RBRACES 288
-#define LPAR 289
-#define RPAR 290
-#define LBRACKET 291
-#define RBRACKET 292
-#define POINT 293
-#define SINGLE_QUOTES 294
-#define COMMA 295
-#define SEMI_COLLON 296
-#define PRINT 297
-#define PRIVAT 298
-#define PUBLIC 299
-#define PROTECTED 300
-#define BOOL_VAL 301
-#define INT_NUM 302
-#define REAL_NUM 303
-#define CHAR_VAL 304
-#define STRING_VAL 305
-#define ARRAY_IDENTIF 306
-#define VOID 307
-#define INT 308
-#define FLOAT 309
-#define CHAR 310
-#define STRING 311
-#define BOOL 312
-#define IDENTIF 313
+#define OPEN_PRTHS 265
+#define CLOSE_PRTHS 266
+#define BGIN 267
+#define END 268
+#define IF 269
+#define ELSE 270
+#define WHILE 271
+#define FOR 272
+#define DO 273
+#define RETURN 274
+#define ASSIGN 275
+#define LESS 276
+#define LESSEQ 277
+#define GRT 278
+#define GRTEQ 279
+#define EQ 280
+#define NOT 281
+#define AND 282
+#define OR 283
+#define PLUS 284
+#define MINUS 285
+#define DIV 286
+#define MULTIP 287
+#define MOD 288
+#define LBRACES 289
+#define RBRACES 290
+#define LPAR 291
+#define RPAR 292
+#define LBRACKET 293
+#define RBRACKET 294
+#define POINT 295
+#define SINGLE_QUOTES 296
+#define COMMA 297
+#define SEMI_COLLON 298
+#define PRINT 299
+#define PRIVAT 300
+#define PUBLIC 301
+#define PROTECTED 302
+#define BOOL_VAL 303
+#define INT_NUM 304
+#define REAL_NUM 305
+#define CHAR_VAL 306
+#define STRING_VAL 307
+#define ARRAY_IDENTIF 308
+#define VOID 309
+#define INT 310
+#define FLOAT 311
+#define CHAR 312
+#define STRING 313
+#define BOOL 314
+#define IDENTIF 315
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 300 "fis.y"
+#line 321 "fis.y"
 
   int intTyp;
   float floatTyp;
@@ -191,7 +195,7 @@ union YYSTYPE
   struct node *astval;
   char* boolTyp;
 
-#line 195 "y.tab.h"
+#line 199 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

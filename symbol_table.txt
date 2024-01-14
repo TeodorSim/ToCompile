@@ -1,5 +1,4 @@
-Nume:   d   | Tip:   int   | Scope:   GLOBAL   | Neinitializata  
- Nume:   aa   | Tip:   int   | Scope:   GLOBAL   | Valoare:   100  
+Nume:   aa   | Tip:   int   | Scope:   GLOBAL   | Valoare:   100  
  Nume:   b   | Tip:   int   | Scope:   GLOBAL   | Valoare:   15  
  Nume:   e   | Tip:   float   | Scope:   GLOBAL   | Valoare:   7.500000  
  Nume:   rr   | Tip:   float   | Scope:   GLOBAL   | Valoare:   7.500000  
@@ -10,4 +9,7 @@ Nume:   d   | Tip:   int   | Scope:   GLOBAL   | Neinitializata
  Nume:   vctor[10]   | Tip:   int vector   | Scope:   GLOBAL   | Neinitializata  
  Nume:   lector[1]   | Tip:   int vector   | Scope:   GLOBAL   | Neinitializata  
  Nume:   abc[3]   | Tip:   char vector   | Scope:   GLOBAL   | Neinitializata  
+ Nume:   arc   | Tip:   int   | Scope:   GLOBAL   | Valoare:   3  
+ Nume:   q   | Tip:   structure   | Scope:   GLOBAL   | Neinitializata  
+ Nume:   blvctr[3]   | Tip:   bool vector   | Scope:   MAIN   | Neinitializata  
  

@@ -1,4 +1,3 @@
-int d;
 int aa <- 100;
 int b <- 15;
 
@@ -14,3 +13,13 @@ bool f <- "true";
 int vctor[10];
 int lector[1];
 char abc[3];
+
+structure { 
+    int arc <- 3; 
+}q;
+
+begin_program
+
+bool blvctr[3];
+
+end_program

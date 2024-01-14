@@ -133,6 +133,12 @@ int nrFun=0; // nr de functii descrise
 int nrSimb=0;// variabila va nr cate simboluri au fost declarate
 int nrparametrii[50]={0};
 int global =0; // 0- global 1- main 2 - scope functii
+struct{
+    int nrSimb;
+    bool activ;
+} inside_struct;
+//inside_struct.activ=true - varibila e parte dins struct
+//inside_struct.activ=true - varibila nu e parte dins struct
 int nrf=0 ;// pe asocierea parametrilor
 FILE* tabel;
 FILE* tabel2;
@@ -229,6 +235,21 @@ void declarare(char dnume[], char dtyp[], int dglobal, int dconstant)
         Simb[nrSimb].vectorIntVal_occupied = 0;
         Simb[nrSimb].vectorFloatVal_occupied = 0;
     }
+    if(strcmp(dtyp, "structure")==0 && inside_struct.nrSimb != -1){
+        //reiteram in tabelul de simboluri pentru a modifca numele variabilelor din struct
+        int copie_nrSimb = nrSimb - 1; // fara variabila curenta
+        while(copie_nrSimb >= inside_struct.nrSimb){
+            //structNume.variabilaInternaNume;
+            char copie_nume[STRING_DIMENSION];
+            strcpy(copie_nume, dnume);
+            strcat(copie_nume, ".");
+            strcat(copie_nume, Simb[copie_nrSimb].nume);
+            strcpy(Simb[copie_nrSimb].nume, copie_nume);
+            copie_nrSimb--;
+        }
+    }
+    inside_struct.activ = false;
+    inside_struct.nrSimb = -1;
 }
 
 // varificam daca o variabila a fost declarata
@@ -366,7 +387,7 @@ void initializareBOOL(char nume[], char val[])
     }
 }
 
-#line 370 "y.tab.c"
+#line 391 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -417,55 +438,57 @@ extern int yydebug;
     TYPEOF = 262,                  /* TYPEOF  */
     TREQQ = 263,                   /* TREQQ  */
     CLASS_TYP = 264,               /* CLASS_TYP  */
-    BGIN = 265,                    /* BGIN  */
-    END = 266,                     /* END  */
-    IF = 267,                      /* IF  */
-    ELSE = 268,                    /* ELSE  */
-    WHILE = 269,                   /* WHILE  */
-    FOR = 270,                     /* FOR  */
-    DO = 271,                      /* DO  */
-    RETURN = 272,                  /* RETURN  */
-    ASSIGN = 273,                  /* ASSIGN  */
-    LESS = 274,                    /* LESS  */
-    LESSEQ = 275,                  /* LESSEQ  */
-    GRT = 276,                     /* GRT  */
-    GRTEQ = 277,                   /* GRTEQ  */
-    EQ = 278,                      /* EQ  */
-    NOT = 279,                     /* NOT  */
-    AND = 280,                     /* AND  */
-    OR = 281,                      /* OR  */
-    PLUS = 282,                    /* PLUS  */
-    MINUS = 283,                   /* MINUS  */
-    DIV = 284,                     /* DIV  */
-    MULTIP = 285,                  /* MULTIP  */
-    MOD = 286,                     /* MOD  */
-    LBRACES = 287,                 /* LBRACES  */
-    RBRACES = 288,                 /* RBRACES  */
-    LPAR = 289,                    /* LPAR  */
-    RPAR = 290,                    /* RPAR  */
-    LBRACKET = 291,                /* LBRACKET  */
-    RBRACKET = 292,                /* RBRACKET  */
-    POINT = 293,                   /* POINT  */
-    SINGLE_QUOTES = 294,           /* SINGLE_QUOTES  */
-    COMMA = 295,                   /* COMMA  */
-    SEMI_COLLON = 296,             /* SEMI_COLLON  */
-    PRINT = 297,                   /* PRINT  */
-    PRIVAT = 298,                  /* PRIVAT  */
-    PUBLIC = 299,                  /* PUBLIC  */
-    PROTECTED = 300,               /* PROTECTED  */
-    BOOL_VAL = 301,                /* BOOL_VAL  */
-    INT_NUM = 302,                 /* INT_NUM  */
-    REAL_NUM = 303,                /* REAL_NUM  */
-    CHAR_VAL = 304,                /* CHAR_VAL  */
-    STRING_VAL = 305,              /* STRING_VAL  */
-    ARRAY_IDENTIF = 306,           /* ARRAY_IDENTIF  */
-    VOID = 307,                    /* VOID  */
-    INT = 308,                     /* INT  */
-    FLOAT = 309,                   /* FLOAT  */
-    CHAR = 310,                    /* CHAR  */
-    STRING = 311,                  /* STRING  */
-    BOOL = 312,                    /* BOOL  */
-    IDENTIF = 313                  /* IDENTIF  */
+    OPEN_PRTHS = 265,              /* OPEN_PRTHS  */
+    CLOSE_PRTHS = 266,             /* CLOSE_PRTHS  */
+    BGIN = 267,                    /* BGIN  */
+    END = 268,                     /* END  */
+    IF = 269,                      /* IF  */
+    ELSE = 270,                    /* ELSE  */
+    WHILE = 271,                   /* WHILE  */
+    FOR = 272,                     /* FOR  */
+    DO = 273,                      /* DO  */
+    RETURN = 274,                  /* RETURN  */
+    ASSIGN = 275,                  /* ASSIGN  */
+    LESS = 276,                    /* LESS  */
+    LESSEQ = 277,                  /* LESSEQ  */
+    GRT = 278,                     /* GRT  */
+    GRTEQ = 279,                   /* GRTEQ  */
+    EQ = 280,                      /* EQ  */
+    NOT = 281,                     /* NOT  */
+    AND = 282,                     /* AND  */
+    OR = 283,                      /* OR  */
+    PLUS = 284,                    /* PLUS  */
+    MINUS = 285,                   /* MINUS  */
+    DIV = 286,                     /* DIV  */
+    MULTIP = 287,                  /* MULTIP  */
+    MOD = 288,                     /* MOD  */
+    LBRACES = 289,                 /* LBRACES  */
+    RBRACES = 290,                 /* RBRACES  */
+    LPAR = 291,                    /* LPAR  */
+    RPAR = 292,                    /* RPAR  */
+    LBRACKET = 293,                /* LBRACKET  */
+    RBRACKET = 294,                /* RBRACKET  */
+    POINT = 295,                   /* POINT  */
+    SINGLE_QUOTES = 296,           /* SINGLE_QUOTES  */
+    COMMA = 297,                   /* COMMA  */
+    SEMI_COLLON = 298,             /* SEMI_COLLON  */
+    PRINT = 299,                   /* PRINT  */
+    PRIVAT = 300,                  /* PRIVAT  */
+    PUBLIC = 301,                  /* PUBLIC  */
+    PROTECTED = 302,               /* PROTECTED  */
+    BOOL_VAL = 303,                /* BOOL_VAL  */
+    INT_NUM = 304,                 /* INT_NUM  */
+    REAL_NUM = 305,                /* REAL_NUM  */
+    CHAR_VAL = 306,                /* CHAR_VAL  */
+    STRING_VAL = 307,              /* STRING_VAL  */
+    ARRAY_IDENTIF = 308,           /* ARRAY_IDENTIF  */
+    VOID = 309,                    /* VOID  */
+    INT = 310,                     /* INT  */
+    FLOAT = 311,                   /* FLOAT  */
+    CHAR = 312,                    /* CHAR  */
+    STRING = 313,                  /* STRING  */
+    BOOL = 314,                    /* BOOL  */
+    IDENTIF = 315                  /* IDENTIF  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -481,61 +504,63 @@ extern int yydebug;
 #define TYPEOF 262
 #define TREQQ 263
 #define CLASS_TYP 264
-#define BGIN 265
-#define END 266
-#define IF 267
-#define ELSE 268
-#define WHILE 269
-#define FOR 270
-#define DO 271
-#define RETURN 272
-#define ASSIGN 273
-#define LESS 274
-#define LESSEQ 275
-#define GRT 276
-#define GRTEQ 277
-#define EQ 278
-#define NOT 279
-#define AND 280
-#define OR 281
-#define PLUS 282
-#define MINUS 283
-#define DIV 284
-#define MULTIP 285
-#define MOD 286
-#define LBRACES 287
-#define RBRACES 288
-#define LPAR 289
-#define RPAR 290
-#define LBRACKET 291
-#define RBRACKET 292
-#define POINT 293
-#define SINGLE_QUOTES 294
-#define COMMA 295
-#define SEMI_COLLON 296
-#define PRINT 297
-#define PRIVAT 298
-#define PUBLIC 299
-#define PROTECTED 300
-#define BOOL_VAL 301
-#define INT_NUM 302
-#define REAL_NUM 303
-#define CHAR_VAL 304
-#define STRING_VAL 305
-#define ARRAY_IDENTIF 306
-#define VOID 307
-#define INT 308
-#define FLOAT 309
-#define CHAR 310
-#define STRING 311
-#define BOOL 312
-#define IDENTIF 313
+#define OPEN_PRTHS 265
+#define CLOSE_PRTHS 266
+#define BGIN 267
+#define END 268
+#define IF 269
+#define ELSE 270
+#define WHILE 271
+#define FOR 272
+#define DO 273
+#define RETURN 274
+#define ASSIGN 275
+#define LESS 276
+#define LESSEQ 277
+#define GRT 278
+#define GRTEQ 279
+#define EQ 280
+#define NOT 281
+#define AND 282
+#define OR 283
+#define PLUS 284
+#define MINUS 285
+#define DIV 286
+#define MULTIP 287
+#define MOD 288
+#define LBRACES 289
+#define RBRACES 290
+#define LPAR 291
+#define RPAR 292
+#define LBRACKET 293
+#define RBRACKET 294
+#define POINT 295
+#define SINGLE_QUOTES 296
+#define COMMA 297
+#define SEMI_COLLON 298
+#define PRINT 299
+#define PRIVAT 300
+#define PUBLIC 301
+#define PROTECTED 302
+#define BOOL_VAL 303
+#define INT_NUM 304
+#define REAL_NUM 305
+#define CHAR_VAL 306
+#define STRING_VAL 307
+#define ARRAY_IDENTIF 308
+#define VOID 309
+#define INT 310
+#define FLOAT 311
+#define CHAR 312
+#define STRING 313
+#define BOOL 314
+#define IDENTIF 315
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 300 "fis.y"
+#line 321 "fis.y"
 
   int intTyp;
   float floatTyp;
@@ -547,7 +572,7 @@ union YYSTYPE
   struct node *astval;
   char* boolTyp;
 
-#line 551 "y.tab.c"
+#line 576 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -577,72 +602,81 @@ enum yysymbol_kind_t
   YYSYMBOL_TYPEOF = 7,                     /* TYPEOF  */
   YYSYMBOL_TREQQ = 8,                      /* TREQQ  */
   YYSYMBOL_CLASS_TYP = 9,                  /* CLASS_TYP  */
-  YYSYMBOL_BGIN = 10,                      /* BGIN  */
-  YYSYMBOL_END = 11,                       /* END  */
-  YYSYMBOL_IF = 12,                        /* IF  */
-  YYSYMBOL_ELSE = 13,                      /* ELSE  */
-  YYSYMBOL_WHILE = 14,                     /* WHILE  */
-  YYSYMBOL_FOR = 15,                       /* FOR  */
-  YYSYMBOL_DO = 16,                        /* DO  */
-  YYSYMBOL_RETURN = 17,                    /* RETURN  */
-  YYSYMBOL_ASSIGN = 18,                    /* ASSIGN  */
-  YYSYMBOL_LESS = 19,                      /* LESS  */
-  YYSYMBOL_LESSEQ = 20,                    /* LESSEQ  */
-  YYSYMBOL_GRT = 21,                       /* GRT  */
-  YYSYMBOL_GRTEQ = 22,                     /* GRTEQ  */
-  YYSYMBOL_EQ = 23,                        /* EQ  */
-  YYSYMBOL_NOT = 24,                       /* NOT  */
-  YYSYMBOL_AND = 25,                       /* AND  */
-  YYSYMBOL_OR = 26,                        /* OR  */
-  YYSYMBOL_PLUS = 27,                      /* PLUS  */
-  YYSYMBOL_MINUS = 28,                     /* MINUS  */
-  YYSYMBOL_DIV = 29,                       /* DIV  */
-  YYSYMBOL_MULTIP = 30,                    /* MULTIP  */
-  YYSYMBOL_MOD = 31,                       /* MOD  */
-  YYSYMBOL_LBRACES = 32,                   /* LBRACES  */
-  YYSYMBOL_RBRACES = 33,                   /* RBRACES  */
-  YYSYMBOL_LPAR = 34,                      /* LPAR  */
-  YYSYMBOL_RPAR = 35,                      /* RPAR  */
-  YYSYMBOL_LBRACKET = 36,                  /* LBRACKET  */
-  YYSYMBOL_RBRACKET = 37,                  /* RBRACKET  */
-  YYSYMBOL_POINT = 38,                     /* POINT  */
-  YYSYMBOL_SINGLE_QUOTES = 39,             /* SINGLE_QUOTES  */
-  YYSYMBOL_COMMA = 40,                     /* COMMA  */
-  YYSYMBOL_SEMI_COLLON = 41,               /* SEMI_COLLON  */
-  YYSYMBOL_PRINT = 42,                     /* PRINT  */
-  YYSYMBOL_PRIVAT = 43,                    /* PRIVAT  */
-  YYSYMBOL_PUBLIC = 44,                    /* PUBLIC  */
-  YYSYMBOL_PROTECTED = 45,                 /* PROTECTED  */
-  YYSYMBOL_BOOL_VAL = 46,                  /* BOOL_VAL  */
-  YYSYMBOL_INT_NUM = 47,                   /* INT_NUM  */
-  YYSYMBOL_REAL_NUM = 48,                  /* REAL_NUM  */
-  YYSYMBOL_CHAR_VAL = 49,                  /* CHAR_VAL  */
-  YYSYMBOL_STRING_VAL = 50,                /* STRING_VAL  */
-  YYSYMBOL_ARRAY_IDENTIF = 51,             /* ARRAY_IDENTIF  */
-  YYSYMBOL_VOID = 52,                      /* VOID  */
-  YYSYMBOL_INT = 53,                       /* INT  */
-  YYSYMBOL_FLOAT = 54,                     /* FLOAT  */
-  YYSYMBOL_CHAR = 55,                      /* CHAR  */
-  YYSYMBOL_STRING = 56,                    /* STRING  */
-  YYSYMBOL_BOOL = 57,                      /* BOOL  */
-  YYSYMBOL_IDENTIF = 58,                   /* IDENTIF  */
-  YYSYMBOL_59_ = 59,                       /* '+'  */
-  YYSYMBOL_60_ = 60,                       /* '-'  */
-  YYSYMBOL_61_ = 61,                       /* '*'  */
-  YYSYMBOL_62_ = 62,                       /* '/'  */
-  YYSYMBOL_63_ = 63,                       /* '%'  */
-  YYSYMBOL_64_ = 64,                       /* '{'  */
-  YYSYMBOL_65_ = 65,                       /* '}'  */
-  YYSYMBOL_66_ = 66,                       /* '['  */
-  YYSYMBOL_67_ = 67,                       /* ']'  */
-  YYSYMBOL_68_ = 68,                       /* '('  */
-  YYSYMBOL_69_ = 69,                       /* ')'  */
-  YYSYMBOL_70_ = 70,                       /* ';'  */
-  YYSYMBOL_71_ = 71,                       /* ','  */
-  YYSYMBOL_YYACCEPT = 72,                  /* $accept  */
-  YYSYMBOL_vartype = 73,                   /* vartype  */
-  YYSYMBOL_INSTRUCTIUNI = 74,              /* INSTRUCTIUNI  */
-  YYSYMBOL_INSTRUCTIUNE = 75               /* INSTRUCTIUNE  */
+  YYSYMBOL_OPEN_PRTHS = 10,                /* OPEN_PRTHS  */
+  YYSYMBOL_CLOSE_PRTHS = 11,               /* CLOSE_PRTHS  */
+  YYSYMBOL_BGIN = 12,                      /* BGIN  */
+  YYSYMBOL_END = 13,                       /* END  */
+  YYSYMBOL_IF = 14,                        /* IF  */
+  YYSYMBOL_ELSE = 15,                      /* ELSE  */
+  YYSYMBOL_WHILE = 16,                     /* WHILE  */
+  YYSYMBOL_FOR = 17,                       /* FOR  */
+  YYSYMBOL_DO = 18,                        /* DO  */
+  YYSYMBOL_RETURN = 19,                    /* RETURN  */
+  YYSYMBOL_ASSIGN = 20,                    /* ASSIGN  */
+  YYSYMBOL_LESS = 21,                      /* LESS  */
+  YYSYMBOL_LESSEQ = 22,                    /* LESSEQ  */
+  YYSYMBOL_GRT = 23,                       /* GRT  */
+  YYSYMBOL_GRTEQ = 24,                     /* GRTEQ  */
+  YYSYMBOL_EQ = 25,                        /* EQ  */
+  YYSYMBOL_NOT = 26,                       /* NOT  */
+  YYSYMBOL_AND = 27,                       /* AND  */
+  YYSYMBOL_OR = 28,                        /* OR  */
+  YYSYMBOL_PLUS = 29,                      /* PLUS  */
+  YYSYMBOL_MINUS = 30,                     /* MINUS  */
+  YYSYMBOL_DIV = 31,                       /* DIV  */
+  YYSYMBOL_MULTIP = 32,                    /* MULTIP  */
+  YYSYMBOL_MOD = 33,                       /* MOD  */
+  YYSYMBOL_LBRACES = 34,                   /* LBRACES  */
+  YYSYMBOL_RBRACES = 35,                   /* RBRACES  */
+  YYSYMBOL_LPAR = 36,                      /* LPAR  */
+  YYSYMBOL_RPAR = 37,                      /* RPAR  */
+  YYSYMBOL_LBRACKET = 38,                  /* LBRACKET  */
+  YYSYMBOL_RBRACKET = 39,                  /* RBRACKET  */
+  YYSYMBOL_POINT = 40,                     /* POINT  */
+  YYSYMBOL_SINGLE_QUOTES = 41,             /* SINGLE_QUOTES  */
+  YYSYMBOL_COMMA = 42,                     /* COMMA  */
+  YYSYMBOL_SEMI_COLLON = 43,               /* SEMI_COLLON  */
+  YYSYMBOL_PRINT = 44,                     /* PRINT  */
+  YYSYMBOL_PRIVAT = 45,                    /* PRIVAT  */
+  YYSYMBOL_PUBLIC = 46,                    /* PUBLIC  */
+  YYSYMBOL_PROTECTED = 47,                 /* PROTECTED  */
+  YYSYMBOL_BOOL_VAL = 48,                  /* BOOL_VAL  */
+  YYSYMBOL_INT_NUM = 49,                   /* INT_NUM  */
+  YYSYMBOL_REAL_NUM = 50,                  /* REAL_NUM  */
+  YYSYMBOL_CHAR_VAL = 51,                  /* CHAR_VAL  */
+  YYSYMBOL_STRING_VAL = 52,                /* STRING_VAL  */
+  YYSYMBOL_ARRAY_IDENTIF = 53,             /* ARRAY_IDENTIF  */
+  YYSYMBOL_VOID = 54,                      /* VOID  */
+  YYSYMBOL_INT = 55,                       /* INT  */
+  YYSYMBOL_FLOAT = 56,                     /* FLOAT  */
+  YYSYMBOL_CHAR = 57,                      /* CHAR  */
+  YYSYMBOL_STRING = 58,                    /* STRING  */
+  YYSYMBOL_BOOL = 59,                      /* BOOL  */
+  YYSYMBOL_IDENTIF = 60,                   /* IDENTIF  */
+  YYSYMBOL_61_ = 61,                       /* '+'  */
+  YYSYMBOL_62_ = 62,                       /* '-'  */
+  YYSYMBOL_63_ = 63,                       /* '*'  */
+  YYSYMBOL_64_ = 64,                       /* '/'  */
+  YYSYMBOL_65_ = 65,                       /* '%'  */
+  YYSYMBOL_66_ = 66,                       /* '{'  */
+  YYSYMBOL_67_ = 67,                       /* '}'  */
+  YYSYMBOL_68_ = 68,                       /* '['  */
+  YYSYMBOL_69_ = 69,                       /* ']'  */
+  YYSYMBOL_70_ = 70,                       /* '('  */
+  YYSYMBOL_71_ = 71,                       /* ')'  */
+  YYSYMBOL_72_ = 72,                       /* ';'  */
+  YYSYMBOL_73_ = 73,                       /* ','  */
+  YYSYMBOL_YYACCEPT = 74,                  /* $accept  */
+  YYSYMBOL_vartype = 75,                   /* vartype  */
+  YYSYMBOL_PROGRAM = 76,                   /* PROGRAM  */
+  YYSYMBOL_BLOC = 77,                      /* BLOC  */
+  YYSYMBOL_INSTRUCTIUNI = 78,              /* INSTRUCTIUNI  */
+  YYSYMBOL_INSTRUCTIUNE = 79,              /* INSTRUCTIUNE  */
+  YYSYMBOL_STRUCTURI = 80,                 /* STRUCTURI  */
+  YYSYMBOL_STRUCTURA = 81,                 /* STRUCTURA  */
+  YYSYMBOL_DECLARATII_IN_STRUCT = 82,      /* DECLARATII_IN_STRUCT  */
+  YYSYMBOL_DECLARATII = 83,                /* DECLARATII  */
+  YYSYMBOL_DECLARATIE = 84                 /* DECLARATIE  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -968,21 +1002,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  11
+#define YYFINAL  16
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   57
+#define YYLAST   92
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  72
+#define YYNTOKENS  74
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  17
+#define YYNRULES  38
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  23
+#define YYNSTATES  75
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   313
+#define YYMAXUTOK   315
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -999,16 +1033,16 @@ static const yytype_int8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,    63,     2,     2,
-      68,    69,    61,    59,    71,    60,     2,    62,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    70,
+       2,     2,     2,     2,     2,     2,     2,    65,     2,     2,
+      70,    71,    63,    61,    73,    62,     2,    64,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    72,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    66,     2,    67,     2,     2,     2,     2,     2,     2,
+       2,    68,     2,    69,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    64,     2,    65,     2,     2,     2,     2,
+       2,     2,     2,    66,     2,    67,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1027,15 +1061,17 @@ static const yytype_int8 yytranslate[] =
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    58
+      55,    56,    57,    58,    59,    60
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   343,   343,   344,   345,   346,   347,   372,   373,   377,
-     386,   397,   408,   425,   436,   447,   481,   494
+       0,   364,   364,   365,   366,   367,   368,   393,   394,   395,
+     396,   402,   404,   405,   409,   419,   431,   443,   461,   473,
+     485,   520,   534,   573,   574,   577,   591,   599,   600,   604,
+     613,   624,   635,   652,   663,   674,   708,   721,   755
 };
 #endif
 
@@ -1052,16 +1088,18 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "CONSTANT", "EVAL",
-  "STRUCTURE", "CLASS", "TYPEOF", "TREQQ", "CLASS_TYP", "BGIN", "END",
-  "IF", "ELSE", "WHILE", "FOR", "DO", "RETURN", "ASSIGN", "LESS", "LESSEQ",
-  "GRT", "GRTEQ", "EQ", "NOT", "AND", "OR", "PLUS", "MINUS", "DIV",
-  "MULTIP", "MOD", "LBRACES", "RBRACES", "LPAR", "RPAR", "LBRACKET",
-  "RBRACKET", "POINT", "SINGLE_QUOTES", "COMMA", "SEMI_COLLON", "PRINT",
-  "PRIVAT", "PUBLIC", "PROTECTED", "BOOL_VAL", "INT_NUM", "REAL_NUM",
-  "CHAR_VAL", "STRING_VAL", "ARRAY_IDENTIF", "VOID", "INT", "FLOAT",
-  "CHAR", "STRING", "BOOL", "IDENTIF", "'+'", "'-'", "'*'", "'/'", "'%'",
-  "'{'", "'}'", "'['", "']'", "'('", "')'", "';'", "','", "$accept",
-  "vartype", "INSTRUCTIUNI", "INSTRUCTIUNE", YY_NULLPTR
+  "STRUCTURE", "CLASS", "TYPEOF", "TREQQ", "CLASS_TYP", "OPEN_PRTHS",
+  "CLOSE_PRTHS", "BGIN", "END", "IF", "ELSE", "WHILE", "FOR", "DO",
+  "RETURN", "ASSIGN", "LESS", "LESSEQ", "GRT", "GRTEQ", "EQ", "NOT", "AND",
+  "OR", "PLUS", "MINUS", "DIV", "MULTIP", "MOD", "LBRACES", "RBRACES",
+  "LPAR", "RPAR", "LBRACKET", "RBRACKET", "POINT", "SINGLE_QUOTES",
+  "COMMA", "SEMI_COLLON", "PRINT", "PRIVAT", "PUBLIC", "PROTECTED",
+  "BOOL_VAL", "INT_NUM", "REAL_NUM", "CHAR_VAL", "STRING_VAL",
+  "ARRAY_IDENTIF", "VOID", "INT", "FLOAT", "CHAR", "STRING", "BOOL",
+  "IDENTIF", "'+'", "'-'", "'*'", "'/'", "'%'", "'{'", "'}'", "'['", "']'",
+  "'('", "')'", "';'", "','", "$accept", "vartype", "PROGRAM", "BLOC",
+  "INSTRUCTIUNI", "INSTRUCTIUNE", "STRUCTURI", "STRUCTURA",
+  "DECLARATII_IN_STRUCT", "DECLARATII", "DECLARATIE", YY_NULLPTR
 };
 
 static const char *
@@ -1071,12 +1109,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-63)
+#define YYPACT_NINF (-57)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-1)
+#define YYTABLE_NINF (-39)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -1085,9 +1123,14 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -38,   -63,   -63,   -63,   -63,   -63,   -44,     0,   -62,   -63,
-      -9,   -63,   -60,   -63,   -45,   -63,   -63,   -63,   -63,   -63,
-     -63,   -63,   -63
+       0,   -56,   -57,   -57,   -57,   -57,   -57,   -47,    19,     0,
+     -43,    -5,   -40,    30,   -57,    16,   -57,   -45,    24,    30,
+     -34,   -32,   -11,   -57,    30,     4,   -31,   -57,   -24,   -33,
+      12,   -57,    22,   -57,   -25,   -23,   -57,   -57,    30,    60,
+      30,   -57,    14,   -57,   -57,   -57,   -57,   -57,   -57,   -57,
+      18,   -57,    55,   -57,    63,   -57,    64,   -57,   -57,   -57,
+     -57,   -57,   -57,   -57,   -57,    31,   -57,   -57,   -57,   -57,
+     -57,   -57,   -57,   -57,   -57
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -1095,21 +1138,28 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     2,     4,     3,     6,     5,     0,     0,     0,    16,
-       9,     1,     0,     7,     0,     8,    14,    10,    11,    12,
-      13,    17,    15
+      38,     0,     2,     4,     3,     6,     5,     0,     0,    38,
+       0,    38,     0,    38,    36,    29,     1,     0,     0,    11,
+       0,     0,    38,    23,     0,     0,     0,    27,     0,    26,
+       0,    21,    14,     8,     0,     0,    12,    24,     0,     0,
+       0,    28,     0,    34,    30,    31,    32,    33,    37,    35,
+       0,    21,    14,    13,     0,     7,     0,    25,    19,    15,
+      16,    17,    18,    22,    20,     0,     9,    10,    19,    15,
+      16,    17,    18,    22,    20
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -63,   -63,   -63,     4
+     -57,    -7,   -57,   -20,   -57,    71,    81,     2,   -57,    21,
+      -8
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     6,     7,     8
+       0,     7,     8,    18,    19,    20,     9,    10,    28,    11,
+      12
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -1117,45 +1167,62 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      11,    16,    17,    18,    19,    20,    21,     9,    13,    14,
-      15,    12,     0,    22,    10,     1,     2,     3,     4,     5,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     1,     2,     3,     4,     5
+       1,    38,    17,    26,    39,     1,    14,    24,    31,     1,
+      13,    21,    34,    15,    26,    32,    40,    34,    54,    16,
+      56,    26,     2,     3,     4,     5,     6,    21,    51,    23,
+      22,    34,    27,    34,    29,    52,    30,    33,    36,   -38,
+      37,    41,    50,    42,     2,     3,     4,     5,     6,    53,
+       2,     3,     4,     5,     6,     2,     3,     4,     5,     6,
+      43,    44,    45,    46,    47,    48,    58,    59,    60,    61,
+      62,    63,    49,    55,    57,    65,    66,    67,    64,    68,
+      69,    70,    71,    72,    73,     2,     3,     4,     5,     6,
+      35,    74,    25
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,    46,    47,    48,    49,    50,    51,    51,    70,    18,
-      70,     7,    -1,    58,    58,    53,    54,    55,    56,    57,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    53,    54,    55,    56,    57
+       5,    12,     9,    11,    24,     5,    53,    12,    53,     5,
+      66,     9,    19,    60,    22,    60,    12,    24,    38,     0,
+      40,    29,    55,    56,    57,    58,    59,    25,    53,    72,
+       9,    38,    72,    40,    13,    60,    20,    13,    72,    72,
+      72,    72,    20,    67,    55,    56,    57,    58,    59,    72,
+      55,    56,    57,    58,    59,    55,    56,    57,    58,    59,
+      48,    49,    50,    51,    52,    53,    48,    49,    50,    51,
+      52,    53,    60,    13,    60,    20,    13,    13,    60,    48,
+      49,    50,    51,    52,    53,    55,    56,    57,    58,    59,
+      19,    60,    11
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    53,    54,    55,    56,    57,    73,    74,    75,    51,
-      58,     0,    75,    70,    18,    70,    46,    47,    48,    49,
-      50,    51,    58
+       0,     5,    55,    56,    57,    58,    59,    75,    76,    80,
+      81,    83,    84,    66,    53,    60,     0,    75,    77,    78,
+      79,    81,    83,    72,    12,    80,    84,    72,    82,    83,
+      20,    53,    60,    13,    75,    79,    72,    72,    12,    77,
+      12,    72,    67,    48,    49,    50,    51,    52,    53,    60,
+      20,    53,    60,    72,    77,    13,    77,    60,    48,    49,
+      50,    51,    52,    53,    60,    20,    13,    13,    48,    49,
+      50,    51,    52,    53,    60
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    72,    73,    73,    73,    73,    73,    74,    74,    75,
-      75,    75,    75,    75,    75,    75,    75,    75
+       0,    74,    75,    75,    75,    75,    75,    76,    76,    76,
+      76,    77,    78,    78,    79,    79,    79,    79,    79,    79,
+      79,    79,    79,    80,    80,    81,    82,    83,    83,    84,
+      84,    84,    84,    84,    84,    84,    84,    84,    84
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     1,     1,     1,     2,     3,     2,
-       4,     4,     4,     4,     4,     4,     2,     4
+       0,     2,     1,     1,     1,     1,     1,     4,     3,     5,
+       5,     1,     2,     3,     2,     4,     4,     4,     4,     4,
+       4,     2,     4,     2,     3,     5,     1,     2,     3,     2,
+       4,     4,     4,     4,     4,     4,     2,     4,     0
 };
 
 
@@ -1618,9 +1685,10 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 9: /* INSTRUCTIUNE: vartype IDENTIF  */
-#line 377 "fis.y"
+  case 14: /* INSTRUCTIUNE: vartype IDENTIF  */
+#line 409 "fis.y"
                     {
+        global = 1;
         if(verifdecl((yyvsp[0].dataTyp))== -1){
             declarare((yyvsp[0].dataTyp), (yyvsp[-1].dataTyp),global,0);
         } 
@@ -1629,11 +1697,241 @@ yyreduce:
             //yyerror("eroare");
             }
         }
-#line 1633 "y.tab.c"
+#line 1701 "y.tab.c"
     break;
 
-  case 10: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN INT_NUM  */
-#line 386 "fis.y"
+  case 15: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN INT_NUM  */
+#line 419 "fis.y"
+                                   {
+        global = 1;
+        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        else{
+            declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+            initializareINT((yyvsp[-2].dataTyp), (yyvsp[0].intTyp));
+            }
+        global = 0;
+        }
+#line 1718 "y.tab.c"
+    break;
+
+  case 16: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN REAL_NUM  */
+#line 431 "fis.y"
+                                    {
+        global = 1;
+         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        else{
+            declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+            initializareFLOAT((yyvsp[-2].dataTyp), (yyvsp[0].floatTyp));
+            }
+        global = 0;
+        }
+#line 1735 "y.tab.c"
+    break;
+
+  case 17: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN CHAR_VAL  */
+#line 443 "fis.y"
+                                    {
+        global = 1;
+        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else if(strlen((yyvsp[0].charTyp))!=3){
+            printf("Tipul de date accepta un caracter, nu un string. Erroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+        }
+        else{
+            declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+            //printf("vartype IDENTIF ASSIGN CHAR_VAL are char_val: %s\n", $4 );
+            initializareCHAR((yyvsp[-2].dataTyp), (yyvsp[0].charTyp));
+           // printf("vartype IDENTIF ASSIGN CHAR_VA() pt Simb[%d].charVal: '%s'.\n", 7,Simb[7].charVal );
+            }
+        global = 0;
+        }
+#line 1758 "y.tab.c"
+    break;
+
+  case 18: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN STRING_VAL  */
+#line 461 "fis.y"
+                                       {
+        global = 1;
+         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+            initializareSTRING((yyvsp[-2].dataTyp), (yyvsp[0].stringTyp));
+            }
+        global = 0;
+        }
+#line 1775 "y.tab.c"
+    break;
+
+  case 19: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN BOOL_VAL  */
+#line 473 "fis.y"
+                                     {
+        global = 1;
+       if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+            initializareBOOL((yyvsp[-2].dataTyp), (yyvsp[0].boolTyp));
+            } 
+        global = 0;
+        }
+#line 1792 "y.tab.c"
+    break;
+
+  case 20: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN IDENTIF  */
+#line 485 "fis.y"
+                                    {
+        global = 1;
+        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
+            yyerror("eroare");
+            }
+        else{
+            if(verifdecl((yyvsp[0].dataTyp))==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", (yyvsp[0].dataTyp),  yylineno);
+                yyerror("eroare");
+                }
+            else{
+                if(verifinit((yyvsp[0].dataTyp))==-1){
+                    printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", (yyvsp[0].dataTyp), yylineno);
+                    yyerror("eroare");
+                    }
+                else{
+                    /* verificare variabilele sunt de acelasi tip */
+                    char tip_var_second[100];
+                    getTyp((yyvsp[0].dataTyp), tip_var_second);
+                    //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
+                    if(strcmp((yyvsp[-3].dataTyp), tip_var_second)!=0){
+                        printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
+                        yyerror("eroare");
+                        }
+                    else{
+                        /* declarare variabila $1 */
+                        declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+                        copyVal((yyvsp[-2].dataTyp), (yyvsp[0].dataTyp));
+                        }
+                    }
+                }
+            }
+        global = 0;
+        }
+#line 1832 "y.tab.c"
+    break;
+
+  case 21: /* INSTRUCTIUNE: vartype ARRAY_IDENTIF  */
+#line 520 "fis.y"
+                           {
+        global = 1;
+        if(verifdecl((yyvsp[0].arrayTyp))!=-1){
+            printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
+            yyerror("eroare");
+            }
+        else{
+            /* spatiu pt vector */
+            char to_hold[100];
+            strcpy(to_hold, (yyvsp[-1].dataTyp));
+            strcat(to_hold, " vector");
+            declarare((yyvsp[0].arrayTyp), to_hold, global, 0);
+            } 
+        }
+#line 1851 "y.tab.c"
+    break;
+
+  case 22: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN ARRAY_IDENTIF  */
+#line 534 "fis.y"
+                                          {
+        global = 1;
+        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
+            printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
+            yyerror("eroare");
+            }
+        else{
+            if(verifdecl((yyvsp[0].arrayTyp))==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", (yyvsp[0].arrayTyp),  yylineno);
+                yyerror("eroare");
+                }
+            else{
+                if(verifinit((yyvsp[0].arrayTyp))==-1){
+                    printf("Variabila %s nu a fost initializata. Eroare la linia :%d\n", (yyvsp[0].arrayTyp), yylineno);
+                    yyerror("eroare");
+                    }
+                else{
+                    /* verificare variabilele sunt de acelasi tip */
+                    char tip_var_second[100];
+                    getTyp((yyvsp[0].arrayTyp), tip_var_second);
+                    //printf("tip $2: '%s'\ntip $4: '%s'\n", $1, tip_var_second);
+                    if(strcmp((yyvsp[-3].dataTyp), tip_var_second)!=0){
+                        printf("Variabilele trebuie sa fie de acelasi tip. Eroare la linia :%d\n", yylineno);
+                        yyerror("eroare");
+                        }
+                    else{
+                        /* declarare variabila $1 */
+                        declarare((yyvsp[-2].dataTyp), (yyvsp[-3].dataTyp), global, 0);
+                        copyVal((yyvsp[-2].dataTyp), (yyvsp[0].arrayTyp));
+                        }
+                    }
+                }
+            }
+        global = 0;
+        }
+#line 1891 "y.tab.c"
+    break;
+
+  case 25: /* STRUCTURA: STRUCTURE '{' DECLARATII_IN_STRUCT '}' IDENTIF  */
+#line 577 "fis.y"
+                                               {
+            if(verifdecl((yyvsp[0].dataTyp))== -1){
+                declarare((yyvsp[0].dataTyp), "structure", global, 0);
+                //resetam pt ca terminam apelul de struct
+                inside_struct.activ = false;
+                inside_struct.nrSimb = 0;
+            }
+            else{
+                printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
+            }
+        }
+#line 1907 "y.tab.c"
+    break;
+
+  case 26: /* DECLARATII_IN_STRUCT: DECLARATII  */
+#line 591 "fis.y"
+              {
+        //save the position where the struct starts
+        inside_struct.activ = true;
+        inside_struct.nrSimb = nrSimb+1;
+    }
+#line 1917 "y.tab.c"
+    break;
+
+  case 29: /* DECLARATIE: vartype IDENTIF  */
+#line 604 "fis.y"
+                     {
+        if(verifdecl((yyvsp[0].dataTyp))== -1){
+            declarare((yyvsp[0].dataTyp), (yyvsp[-1].dataTyp),global,0);
+        } 
+        else {
+            printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
+            //yyerror("eroare");
+            }
+        }
+#line 1931 "y.tab.c"
+    break;
+
+  case 30: /* DECLARATIE: vartype IDENTIF ASSIGN INT_NUM  */
+#line 613 "fis.y"
                                    {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1645,11 +1943,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1649 "y.tab.c"
+#line 1947 "y.tab.c"
     break;
 
-  case 11: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN REAL_NUM  */
-#line 397 "fis.y"
+  case 31: /* DECLARATIE: vartype IDENTIF ASSIGN REAL_NUM  */
+#line 624 "fis.y"
                                     {
          if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1661,11 +1959,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1665 "y.tab.c"
+#line 1963 "y.tab.c"
     break;
 
-  case 12: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN CHAR_VAL  */
-#line 408 "fis.y"
+  case 32: /* DECLARATIE: vartype IDENTIF ASSIGN CHAR_VAL  */
+#line 635 "fis.y"
                                     {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1683,11 +1981,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1687 "y.tab.c"
+#line 1985 "y.tab.c"
     break;
 
-  case 13: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN STRING_VAL  */
-#line 425 "fis.y"
+  case 33: /* DECLARATIE: vartype IDENTIF ASSIGN STRING_VAL  */
+#line 652 "fis.y"
                                        {
          if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1699,11 +1997,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1703 "y.tab.c"
+#line 2001 "y.tab.c"
     break;
 
-  case 14: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN BOOL_VAL  */
-#line 436 "fis.y"
+  case 34: /* DECLARATIE: vartype IDENTIF ASSIGN BOOL_VAL  */
+#line 663 "fis.y"
                                      {
        if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1715,11 +2013,11 @@ yyreduce:
             } 
         global = 0;
         }
-#line 1719 "y.tab.c"
+#line 2017 "y.tab.c"
     break;
 
-  case 15: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN IDENTIF  */
-#line 447 "fis.y"
+  case 35: /* DECLARATIE: vartype IDENTIF ASSIGN IDENTIF  */
+#line 674 "fis.y"
                                     {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
@@ -1754,11 +2052,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1758 "y.tab.c"
+#line 2056 "y.tab.c"
     break;
 
-  case 16: /* INSTRUCTIUNE: vartype ARRAY_IDENTIF  */
-#line 481 "fis.y"
+  case 36: /* DECLARATIE: vartype ARRAY_IDENTIF  */
+#line 708 "fis.y"
                            {
         if(verifdecl((yyvsp[0].arrayTyp))!=-1){
             printf("Variabila a fost declarata deja. Eroare la linia :%d \n", yylineno);
@@ -1772,11 +2070,11 @@ yyreduce:
             declarare((yyvsp[0].arrayTyp), to_hold, global, 0);
             } 
         }
-#line 1776 "y.tab.c"
+#line 2074 "y.tab.c"
     break;
 
-  case 17: /* INSTRUCTIUNE: vartype IDENTIF ASSIGN ARRAY_IDENTIF  */
-#line 494 "fis.y"
+  case 37: /* DECLARATIE: vartype IDENTIF ASSIGN ARRAY_IDENTIF  */
+#line 721 "fis.y"
                                           {
         if(verifdecl((yyvsp[-2].dataTyp))!=-1){
             printf("Variabila %s a fost declarata deja. Eroare la linia :%d \n", (yyvsp[-2].dataTyp),  yylineno);
@@ -1811,11 +2109,11 @@ yyreduce:
             }
         global = 0;
         }
-#line 1815 "y.tab.c"
+#line 2113 "y.tab.c"
     break;
 
 
-#line 1819 "y.tab.c"
+#line 2117 "y.tab.c"
 
       default: break;
     }
@@ -2008,7 +2306,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 565 "fis.y"
+#line 791 "fis.y"
 
 
 int errors_occurred = 0;
