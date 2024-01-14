@@ -14,9 +14,11 @@ int vctor[10];
 int lector[1];
 char abc[3];
 
-structure { 
-    int arc <- 3; 
-}q;
+
+structure {
+    int acum;
+    int BLLA[3];
+}qqr;
 
 begin_program
 

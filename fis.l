@@ -58,6 +58,9 @@ space [ \t ]
 "&&" {return AND;}
 "||" {return OR;}
 
+"{" {return OPEN_PRTHS;}
+
+"}" {return CLOSE_PRTHS;}
 
 
 [-+]?0|[-+]?([1-9][0-9]*) {yylval.intTyp = atoi(yytext); return INT_NUM;}
