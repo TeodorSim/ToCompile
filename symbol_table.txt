@@ -1,16 +1,21 @@
-Nume:   aa   | Tip:   int   | Scope:   GLOBAL   | Valoare:   100  
- Nume:   b   | Tip:   int   | Scope:   GLOBAL   | Valoare:   15  
- Nume:   e   | Tip:   float   | Scope:   GLOBAL   | Valoare:   7.500000  
- Nume:   rr   | Tip:   float   | Scope:   GLOBAL   | Valoare:   7.500000  
- Nume:   text   | Tip:   string   | Scope:   GLOBAL   | Valoare:   "asta e"  
- Nume:   c   | Tip:   char   | Scope:   GLOBAL   | Valoare:   'a'  
- Nume:   m   | Tip:   char   | Scope:   GLOBAL   | Valoare:   'a'  
- Nume:   f   | Tip:   bool   | Scope:   GLOBAL   | Valoare:   false 
- Nume:   vctor[10]   | Tip:   int vector   | Scope:   GLOBAL   | Neinitializata  
- Nume:   lector[1]   | Tip:   int vector   | Scope:   GLOBAL   | Neinitializata  
- Nume:   abc[3]   | Tip:   char vector   | Scope:   GLOBAL   | Neinitializata  
- Nume:   qqr.acum   | Tip:   int   | Scope:   GLOBAL   | Neinitializata  
- Nume:   qqr.BLLA[3]   | Tip:   int vector   | Scope:   GLOBAL   | Neinitializata  
- Nume:   qqr   | Tip:   structure   | Scope:   GLOBAL   | Neinitializata  
- Nume:   blvctr[3]   | Tip:   bool vector   | Scope:   MAIN   | Neinitializata  
+Nume:   aa   | Tip:   int   | Scope:   GLOBAL  | Const: 0   | Valoare:   100  
+ Nume:   b   | Tip:   int   | Scope:   GLOBAL  | Const: 0   | Valoare:   15  
+ Nume:   e   | Tip:   float   | Scope:   GLOBAL  | Const: 1   | Valoare:   7.500000  
+ Nume:   rr   | Tip:   float   | Scope:   GLOBAL  | Const: 0   | Valoare:   7.500000  
+ Nume:   text   | Tip:   string   | Scope:   GLOBAL  | Const: 0   | Valoare:   "rsta e"  
+ Nume:   c   | Tip:   char   | Scope:   GLOBAL  | Const: 0   | Valoare:   'a'  
+ Nume:   m   | Tip:   char   | Scope:   GLOBAL  | Const: 0   | Valoare:   'a'  
+ Nume:   f   | Tip:   bool   | Scope:   GLOBAL  | Const: 0   | Valoare:   false 
+ Nume:   vctor   | Tip:   int vector   | Scope:   GLOBAL  | Const: 0   | Valoare:   [  0,  0,  0,  4,  0,  0,  0,  0,  0,  0 ] 
+ Nume:   lector   | Tip:   int vector   | Scope:   GLOBAL  | Const: 0   | Valoare:   [  3 ] 
+ Nume:   abc   | Tip:   string   | Scope:   GLOBAL  | Const: 0   | Neinitializata  
+ Nume:   qqr.acum   | Tip:   int   | Scope:   GLOBAL  | Const: 0   | Valoare:   3  
+ Nume:   qqr.BLLA   | Tip:   int vector   | Scope:   GLOBAL  | Const: 1   | Valoare:   [  0,  33,  0 ] 
+ Nume:   qqr.FLOR   | Tip:   float vector   | Scope:   GLOBAL  | Const: 0   | Valoare:   [  1198338572,  1198338572,  1198338572,  1198338572,  1198338572,  1198338572,  1198338566 ] 
+ Nume:   qqr.now   | Tip:   bool   | Scope:   GLOBAL  | Const: 0   | Valoare:   false 
+ Nume:   qqr   | Tip:   structure   | Scope:   GLOBAL  | Const: 0   | Neinitializata  
+ Nume:   blvctr[3]   | Tip:   bool vector   | Scope:   MAIN  | Const: 0   | Neinitializata  
+ Nume:   clsff.natarium   | Tip:   string   | Scope:   CLASS  | Const: 0   | Neinitializata  
+ Nume:   clsff.aquarium   | Tip:   string   | Scope:   CLASS  | Const: 0   | Neinitializata  
+ Nume:   clsff   | Tip:   classOf   | Scope:   CLASS  | Const: 0   | Neinitializata  
  

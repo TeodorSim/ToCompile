@@ -20,9 +20,9 @@ space [ \t ]
 
 "structure" {return STRUCTURE;}
 
-"class" {return CLASS;} 
+"classOf" {return CLASSOF;} 
 
-"private" {return PRIVAT;}
+"private" {return PRIVATE;}
 "protected" {return PROTECTED;}
 "public" {return PUBLIC;} 
 
@@ -58,20 +58,25 @@ space [ \t ]
 "&&" {return AND;}
 "||" {return OR;}
 
+"::" {return DOUA_DOUA_PCTE;}
+
 "{" {return OPEN_PRTHS;}
 
 "}" {return CLOSE_PRTHS;}
 
+"[" {return OPEN_SQR_PRTHS;}
+
+"]" {return CLOSE_SQR_PRTHS;}
 
 [-+]?0|[-+]?([1-9][0-9]*) {yylval.intTyp = atoi(yytext); return INT_NUM;}
 
 [-+]?0|[-+]?([1-9][0-9]*)"."[0-9]* {yylval.floatTyp = atof(yytext); return REAL_NUM;} 
 
-'[a-zA-Z]'  {yylval.charTyp = strdup(yytext); return CHAR_VAL;} 
+'[a-zA-Z0-9]'  {yylval.charTyp = strdup(yytext); return CHAR_VAL;} 
 
 \"[^"]*\" {yylval.stringTyp = strdup(yytext); return STRING_VAL;}
 
-[a-zA-Z][_a-zA-Z0-9]* {yylval.dataTyp = strdup(yytext); return IDENTIF;}
+[a-zA-Z][_a-zA-Z0-9]*(\.[a-zA-Z][_a-zA-Z0-9]*)* {yylval.dataTyp = strdup(yytext); return IDENTIF;}
 
 [a-zA-Z][_a-zA-Z0-9]*(\[[0-9a-z]+\])+ {yylval.arrayTyp = strdup(yytext); return ARRAY_IDENTIF;}
 

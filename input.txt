@@ -1,8 +1,9 @@
 int aa <- 100;
 int b <- 15;
 
-float e <- 7.5;
+float constant e <- 7.5;
 float rr <- e;
+e <- 3.3;
 string text <- "asta e";
 char c <- 'a';
 char m <- c;
@@ -12,16 +13,34 @@ bool f <- "true";
 
 int vctor[10];
 int lector[1];
+lector [ 0 ] <- 3;
 char abc[3];
 
 
 structure {
     int acum;
-    int BLLA[3];
+    int constant BLLA[3];
+    float  FLOR[7];
+    bool now;
 }qqr;
+
+qqr.acum <- 3;
+qqr.now <- "false";
+
+text [ 1 ] <- 'r';
+qqr.BLLA [ 1 ] <- 33;
+vctor [ 3 ] <- 4;
+qqr.FLOR [ 7 ] <- 1.11;
 
 begin_program
 
 bool blvctr[3];
 
 end_program
+
+classOf clsff {
+    public ::
+        string natarium;
+    private ::
+        string aquarium;
+};
