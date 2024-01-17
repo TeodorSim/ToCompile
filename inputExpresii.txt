@@ -1,0 +1,10 @@
+int aa <- 100;
+
+begin_program
+
+int b <- 15;
+int c <- 23;
+int d <- 2;
+aa <- (c * b) + (d - 3);
+
+end_program

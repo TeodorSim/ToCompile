@@ -5,6 +5,10 @@
 #include <cstdlib>
 #include <cmath>
 
+#define MAX_PARAMETERS 10
+#define VECTOR_SIZE 30
+#define MAX_FUNCTIONS 20
+
 #define GLOBAL 0
 #define MAIN 1
 #define FUNCTION 2
@@ -48,6 +52,14 @@ void yyerror(char *);
     bool inside_object = false; //true <- simbolul face parte dintr-un obiect; false <- invers
 } Simb[256];
 
+struct param{
+	char nume[100];
+	char tip[50];
+}p[50];
+
+int nrparametrii[50]={0};
+
+int nrFun=0; // nr de functii 
 
 union value {
      int intVal;
@@ -65,10 +77,7 @@ struct node {
 };
 
 
-
-int nrFun=0; // nr de functii descrise
 int nrSimb=0;// variabila va nr cate simboluri au fost declarate
-int nrparametrii[50]={0};
 int global =0; // 0- global 1- main 2 - scope functii 3 -class scope
 struct{
     int nrSimb;
@@ -76,7 +85,6 @@ struct{
 } inside_struct;
 //inside_struct.activ=true - varibila e parte dins struct
 //inside_struct.activ=true - varibila nu e parte dins struct
-int nrf=0 ;// pe asocierea parametrilor
 FILE* tabel;
 FILE* tabel2;
 void clear_table(){
@@ -417,6 +425,25 @@ void initializareBOOL(char nume[], char val[])
         }
     }
 }
+
+int getValue(char *name) {
+    int i;
+    for (i = 0; i <= nrSimb; i++) {
+        if (strcmp(name, Simb[i].nume) == 0) {
+            if (Simb[i].init == 0) {
+                // Handle the case where the variable is not initialized
+                printf("Variabila %s nu a fost initializata.\n", name);
+                yyerror("eroare");
+                return 0;
+            } else {
+                return Simb[i].intVal;
+            }
+        }
+    }
+    return 0;
+}
+
+
 %}
 
 %union {
@@ -432,9 +459,12 @@ void initializareBOOL(char nume[], char val[])
 }
 
 %token  OPEN_SQR_PRTHS CLOSE_SQR_PRTHS CONSTANT EVAL STRUCTURE CLASSOF TYPEOF TREQQ CLASS_TYP OPEN_PRTHS CLOSE_PRTHS BGIN END IF ELSE WHILE FOR DO RETURN ASSIGN LESS LESSEQ GRT GRTEQ EQ NOT AND OR PLUS MINUS DIV MULTIP MOD LBRACES RBRACES LPAR RPAR LBRACKET RBRACKET POINT SINGLE_QUOTES COMMA SEMI_COLLON PRINT PRIVAT PUBLIC PROTECTED 
-%token DOUA_DOUA_PCTE PRIVATE
+%token DOUA_DOUA_PCTE PRIVATE FUNCTION_CALL
+
 %type <dataTyp> vartype
-%type <intTyp> EXPRESIE EXPRESII
+
+%type <intTyp> ADUNARI_INMULTIRI_INT 
+%type <floatTyp> ADUNARI_INMULTIRI_FLOAT
 
 %token <boolTyp> BOOL_VAL
 
@@ -446,12 +476,12 @@ void initializareBOOL(char nume[], char val[])
 
 %token <stringTyp> STRING_VAL
 
-//%token <dataTyp> IDENTIF
+%token <dataTyp> IDENTIF
 
 //array/ vector
 %token <arrayTyp> ARRAY_IDENTIF
 
-%token <dataTyp> VOID INT FLOAT CHAR STRING BOOL IDENTIF
+%token <dataTyp> VOID INT FLOAT CHAR STRING BOOL 
 
 %left '+' '-'
 %left '*' '/' '%'
@@ -469,27 +499,60 @@ vartype: INT
        | STRING
        ;
 
-EXPRESII: EXPRESIE    
-| EXPRESII EXPRESIE    
+PROGRAM: DECLARATII  BGIN BLOC END
+    | STRUCTURI BLOC END
+    |  STRUCTURI DECLARATII BGIN BLOC END
+    | DECLARATII STRUCTURI DECLARATII BGIN BLOC END CLASE
 ;
 
-EXPRESIE : EXPRESIE  '+' EXPRESIE  {
-        $$ = $1 + $3;
-        printf("A ajuns la Expresie + Expresie\n");
-    }
-	  | EXPRESIE  '-' EXPRESIE {$$ = $1 - $3;}
-	  | EXPRESIE '*' EXPRESIE  {$$ = $1 * $3;}
-	  | EXPRESIE  '/' EXPRESIE {$$ = $1 / $3;}
-      | EXPRESIE  '%' EXPRESIE {$$ = $1 % $3;}
-      | INT_NUM {
-        $<intTyp>$ = $1;
-        printf("A ajuns la Expersie : INT\n");
+//---------------------------------------------------------------
+//clase:
+
+/*
+classOf className
+{
+    public::
+
+}
+*/
+
+
+
+
+CLASE: CLASA ';'
+     | CLASE CLASA ';'
+     ;
+
+CLASA: CLASSOF IDENTIF OPEN_PRTHS CLASABLOC CLOSE_PRTHS{
+            if(verifdecl($2)== -1){
+                global = CLASS_LEVEL;
+                declarare($2, "classOf", global, 0);
+
+
+                /* change SCOPE to class to every variable declared inside of this class */
+                for(int lll = 1; lll <= nrSimb ; lll++){
+                    if (strncmp(Simb[lll].nume, $2, strlen($2)) == 0 && Simb[lll].nume[strlen($2)] == '.'){
+                        //printf("Variabila %s ar putea face parte din clasa variabilei %s\n", Simb[lll].nume, $2);
+                        Simb[lll].global = CLASS_LEVEL;
+                    }
+                }
+            }
+            else{
+                printf("Variabila a fost deja declarata. Eroare la linia :%d \n", yylineno);
+            }
+            global = 0;
         }
-      | REAL_NUM {
-        $<floatTyp>$ = $1;
-        printf("A ajuns la Expersie : INT\n");
-        }
- ;
+    ;
+
+CLASABLOC: PUBLIC DOUA_DOUA_PCTE DECLARATII_IN_OBJECT PRIVATE DOUA_DOUA_PCTE DECLARATII_IN_OBJECT PROTECTED DOUA_DOUA_PCTE DECLARATII_IN_OBJECT
+    | PUBLIC DOUA_DOUA_PCTE DECLARATII_IN_OBJECT PRIVATE DOUA_DOUA_PCTE DECLARATII_IN_OBJECT
+    | PUBLIC DOUA_DOUA_PCTE DECLARATII_IN_OBJECT PROTECTED DOUA_DOUA_PCTE DECLARATII_IN_OBJECT
+    |
+    ;
+
+//---------------------------------------------------------------
+//bloc de functie
+BLOC: INSTRUCTIUNI;
 
 PROGRAM: DECLARATII BGIN BLOC END
     | STRUCTURI BLOC END
@@ -886,7 +949,6 @@ INSTRUCTIUNE:
             yyerror("eroare");
             }
         else{
-            //declarare($2, $1, global, 0);
             if(Simb[k].constant == 1){
                 printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
                 yyerror("eroare");
@@ -992,7 +1054,37 @@ INSTRUCTIUNE:
                 printf("Variabile %s stocheaza: %s\n", $3, value_to_print_temp);
             }
         }
-    
+    | IDENTIF ASSIGN ADUNARI_INMULTIRI_INT { 
+        int k = verifdecl($1);
+        if (verifdecl($1) == -1) {
+                printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
+                yyerror("eroare");
+        } else{
+            // Assign the value to the variable
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareINT($1, $3);
+                }
+            }
+        }
+    |IDENTIF ASSIGN ADUNARI_INMULTIRI_FLOAT { 
+        int k = verifdecl($1);
+        if (verifdecl($1) == -1) {
+                printf("Variabila nu a fost declarata. Eroare la linia :%d \n", yylineno);
+                yyerror("eroare");
+        } else{
+            // Assign the value to the variable
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareFLOAT($1, $3);
+                }
+            }
+        }
+    |
     ;
 
 //---------------------------------------------------------------
@@ -1579,6 +1671,9 @@ DECLARATIE:
                     strcpy(to_hold, $1);
                     strcat(to_hold, " vector");
                     declarare(save_name, to_hold, global, 0);
+                            
+                    /*marcam variabila ca parte dintr-un obiect */
+                    Simb[nrSimb].inside_object = true;
 
                     //initializam sa schimbam default value din array:
                     updateINTarray(save_name, 0, dimension_to_declare);
@@ -1975,6 +2070,24 @@ DECLARATIE:
     
     ;
 
+ADUNARI_INMULTIRI_INT : ADUNARI_INMULTIRI_INT '+' ADUNARI_INMULTIRI_INT{ $<intTyp>$ = $1 + $3;}
+                       | ADUNARI_INMULTIRI_INT '-' ADUNARI_INMULTIRI_INT{ $<intTyp>$ = $1 - $3;}
+                       | INT_NUM {$$ = $1;}
+                       | '(' ADUNARI_INMULTIRI_INT  ')'{ $$ = $2; }
+                       | IDENTIF { $<intTyp>$ = $$; }
+                       | ADUNARI_INMULTIRI_INT '*' ADUNARI_INMULTIRI_INT{ $<intTyp>$ = $1 * $3;}
+                       | ADUNARI_INMULTIRI_INT '/' ADUNARI_INMULTIRI_INT{ $<intTyp>$ = $1 / $3;}
+                       ;
+
+ADUNARI_INMULTIRI_FLOAT : ADUNARI_INMULTIRI_FLOAT '+' ADUNARI_INMULTIRI_FLOAT { $<floatTyp>$ = $1 + $3;}
+                       | ADUNARI_INMULTIRI_FLOAT '-' ADUNARI_INMULTIRI_FLOAT{ $<floatTyp>$ = $1 - $3;}
+                       | REAL_NUM {$$ = $1;}
+                       | '(' ADUNARI_INMULTIRI_FLOAT  ')'{ $$ = $2; }
+                       | IDENTIF { $<floatTyp>$ = $$; }
+                       | ADUNARI_INMULTIRI_FLOAT '*' ADUNARI_INMULTIRI_FLOAT{ $<floatTyp>$ = $1 * $3;}
+                       | ADUNARI_INMULTIRI_FLOAT '/' ADUNARI_INMULTIRI_FLOAT{ $<floatTyp>$ = $1 / $3;}
+                       ; 
+
 
 VARARG: INT_NUM
       | REAL_NUM
@@ -2029,7 +2142,7 @@ int main(int argc, char** argv) {
     yyin=fopen(argv[1],"r");
 
     yyparse();
-    
+
     clear_table();
     tabel_sim();
     clear_table2();
