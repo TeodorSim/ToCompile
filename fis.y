@@ -140,30 +140,40 @@ void tabel_sim () {
             }
 
             /* arrays */
-            if(strcmp(Simb[i].typ, "int vector") == 0 ){
-                fprintf(tabel, " [ ");
-                //printf("In TabelSimb; vector %s are Val_occupied : %d\n", Simb[i].nume, Simb[i].vectorIntVal_occupied);
-                for(int element_vector = 0; element_vector < Simb[i].vectorIntVal_occupied  ; element_vector++){
+            if(strcmp(Simb[i].typ, "int vector") == 0 ){;
+                char temp_la_temp[STRING_DIMENSION];
+                char temp_la_scris[STRING_DIMENSION];
+                strcpy(temp_la_scris, " [ ");
+                 for(int element_vector = 0; element_vector < Simb[i].vectorIntVal_occupied  ; element_vector++){
+                    strcpy(temp_la_temp, "");
                     if(element_vector == Simb[i].vectorIntVal_occupied - 1){
-                        fprintf(tabel, " %d ]", Simb[i].vectorIntVal[element_vector]);
+                        sprintf(temp_la_temp," %d ]", Simb[i].vectorIntVal[element_vector]);
                     }
                     else{
-                        fprintf(tabel, " %d, ", Simb[i].vectorIntVal[element_vector]);
+                        sprintf(temp_la_temp," %d, ", Simb[i].vectorIntVal[element_vector]);
                     }
+                    strcat(temp_la_scris, temp_la_temp);
                 }
+                fprintf(tabel, " %s ", temp_la_scris);
             }
 
             if(strcmp(Simb[i].typ, "float vector") == 0 ){
                 fprintf(tabel, " [ ");
+                char temp_la_temp[STRING_DIMENSION];
                 //printf("In TabelSimb; vector %s are Val_occupied : %d\n", Simb[i].nume, Simb[i].vectorFloatVal_occupied);
                 for(int element_vector = 0; element_vector < Simb[i].vectorFloatVal_occupied  ; element_vector++){
+                    strcpy(temp_la_temp, "");
                     if(element_vector == Simb[i].vectorFloatVal_occupied - 1){
-                        fprintf(tabel, " %d ]", Simb[i].vectorFloatVal[element_vector]);
+                        sprintf(temp_la_temp, " %f ]", Simb[i].vectorFloatVal[element_vector]);
+                        //fprintf(tabel, " %f ]", Simb[i].vectorFloatVal[element_vector]);
                     }
                     else{
-                        fprintf(tabel, " %d, ", Simb[i].vectorFloatVal[element_vector]);
+                        sprintf(temp_la_temp, " %f, ",Simb[i].vectorFloatVal[element_vector]);
+                        //fprintf(tabel, " %f, ", Simb[i].vectorFloatVal[element_vector]);
                     }
+                    fprintf(tabel, " %s ", temp_la_temp);
                 }
+
             }
         }
         else {
@@ -266,6 +276,15 @@ int verifinit(char x[]) {
     }
     return -1;
 }
+char* typeOfff(char n[]){
+    printf("   numele:  %s   ", n);
+    for(int i=1;i<=nrSimb;i++)
+    {
+        if(strcmp(Simb[i].nume,n)==0)
+        return Simb[i].typ;
+    }
+}
+
 /* tipul unei variabile */
 void getTyp(char nume[], char get[])
 {
@@ -475,7 +494,7 @@ EXPRESIE : EXPRESIE  '+' EXPRESIE  {
 PROGRAM: DECLARATII BGIN BLOC END
     | STRUCTURI BLOC END
     | STRUCTURI DECLARATII BGIN BLOC END
-    | DECLARATII STRUCTURI DECLARATII BGIN BLOC END CLASE
+    | DECLARATII STRUCTURI DECLARATII BGIN BLOC END CLASE DECLARATII
 ;
 
 //---------------------------------------------------------------
@@ -697,18 +716,24 @@ INSTRUCTIUNE:
                 yyerror("eroare");
             }
             else{
-                /* check the vector dimensions */
-                if(strcmp(Simb[store_temp_position].typ, "int vector") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
                 }
                 else{
-                    if($3<0 || $3>(STRING_DIMENSION-1) || $3> Simb[store_temp_position].vectorIntVal_occupied){
-                        printf("Dimnesiunea %d nu este conforma pentru variabila %s. Eroare la linia :%d \n", $3, Simb[store_temp_position].nume,  yylineno);
-                        yyerror("eroare");
+                    /* check the vector dimensions */
+                    if(strcmp(Simb[store_temp_position].typ, "int vector") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        updateINTarray($1, $6, $3 );
-                        //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        if($3<0 || $3>(STRING_DIMENSION-1) || $3> Simb[store_temp_position].vectorIntVal_occupied){
+                            printf("Dimnesiunea %d nu este conforma pentru variabila %s. Eroare la linia :%d \n", $3, Simb[store_temp_position].nume,  yylineno);
+                            yyerror("eroare");
+                        }
+                        else{
+                            updateINTarray($1, $6, $3 );
+                            //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        }
                     }
                 }
             }
@@ -722,18 +747,24 @@ INSTRUCTIUNE:
                 yyerror("eroare");
             }
             else{
-                /* check the vector dimensions */
-                if(strcmp(Simb[store_temp_position].typ, "float vector") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
                 }
                 else{
-                    if($3<0 || $3>(STRING_DIMENSION-1)){
-                        printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
-                        yyerror("eroare");
+                    /* check the vector dimensions */
+                    if(strcmp(Simb[store_temp_position].typ, "float vector") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        updateFLOATarray($1, $6, $3);
-                        //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        if($3<0 || $3>(STRING_DIMENSION-1)){
+                            printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                            yyerror("eroare");
+                        }
+                        else{
+                            updateFLOATarray($1, $6, $3);
+                            //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        }
                     }
                 }
             }
@@ -747,23 +778,29 @@ INSTRUCTIUNE:
                 yyerror("eroare");
             }
             else{
-                /* check type */
-                if(strcmp(Simb[store_temp_position].typ, "string") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
                 }
                 else{
-                    /* check dimension */
-                    if($3<0 || $3>(STRING_DIMENSION-1) || $3 > strlen(Simb[store_temp_position].stingVal)){
-                        printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                    /* check type */
+                    if(strcmp(Simb[store_temp_position].typ, "string") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        char get_input_temp[STRING_DIMENSION];
-                        strcpy(get_input_temp, $6);
-                        //input as : 'c'
-                        Simb[store_temp_position].stingVal[$3] = get_input_temp[1];
+                        /* check dimension */
+                        if($3<0 || $3>(STRING_DIMENSION-1) || $3 > strlen(Simb[store_temp_position].stingVal)){
+                            printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                        }
+                        else{
+                            char get_input_temp[STRING_DIMENSION];
+                            strcpy(get_input_temp, $6);
+                            //input as : 'c'
+                            Simb[store_temp_position].stingVal[$3] = get_input_temp[1];
 
-                        //flag de initializat
-                        Simb[store_temp_position].init = 1;
+                            //flag de initializat
+                            Simb[store_temp_position].init = 1;
+                        }
                     }
                 }
             }
@@ -771,64 +808,191 @@ INSTRUCTIUNE:
         }
     | IDENTIF ASSIGN INT_NUM{
         global = 1;
+        int store_temp_position = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
-            //declarare($2, $1, global, 0);
-            initializareINT($1, $3);
+            if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
+                }
+            else{
+                //declarare($2, $1, global, 0);
+                initializareINT($1, $3);
+                }
             }
         global = 0;
         }
     | IDENTIF ASSIGN REAL_NUM{
         global = 1;
+        int k = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
             //declarare($2, $1, global, 0);
-            initializareFLOAT($1, $3);
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareFLOAT($1, $3);
             }
+        }
         global = 0;
         }
     | IDENTIF ASSIGN CHAR_VAL{
         global = 1;
+        int k = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
             //declarare($2, $1, global, 0);
-            initializareCHAR($1, $3);
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareCHAR($1, $3);
+                }
             }
         global = 0;
         }
     | IDENTIF ASSIGN STRING_VAL{
         global = 1;
+        int k = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
             //declarare($2, $1, global, 0);
-            initializareSTRING($1, $3);
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareSTRING($1, $3);
+                }
             }
         global = 0;
         }
     | IDENTIF ASSIGN BOOL_VAL{
-        global = 1;
+        int k = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
             //declarare($2, $1, global, 0);
-            initializareBOOL($1, $3);
+            if(Simb[k].constant == 1){
+                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
+                yyerror("eroare");
+            }else{
+                initializareBOOL($1, $3);
+                }
             }
         global = 0;
         }
+    | TYPEOF '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                //printf("Tipul de date pentru %s este %s.\n",$3, typeOfff($3 ));
+                getTyp($3, type_to_print_temp);
+                printf("Tipul de date pentru %s este %s.\n",$3, type_to_print_temp);
+            }
+        }
+    | EVAL '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                char char_to_transfer_temp[STRING_DIMENSION];
+                getTyp($3, type_to_print_temp);
+                char value_to_print_temp[STRING_DIMENSION];
+                
+                if (strcmp(Simb[store_temp_position].typ, "int") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %d ", Simb[store_temp_position].intVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "bool") == 0) {
+                    if(Simb[store_temp_position].boolVal == true){
+                        strcpy(char_to_transfer_temp, " true ");
+                    }
+                    else{
+                        strcpy(char_to_transfer_temp, " false");
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "float") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %f ", Simb[store_temp_position].floatVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+                
+                if (strcmp(Simb[store_temp_position].typ, "string") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].stingVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "char") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].charVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                /* arrays */
+                if(strcmp(Simb[store_temp_position].typ, "int vector") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", " [ ");
+                    char temp_la_temp[STRING_DIMENSION];
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorIntVal_occupied  ; element_vector++){
+                        strcpy(temp_la_temp, "");
+                        if(element_vector == Simb[store_temp_position].vectorIntVal_occupied - 1){
+                            sprintf(temp_la_temp, " %d ]", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+                        else{
+                            sprintf(temp_la_temp, " %d, ", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+                        strcat(char_to_transfer_temp, temp_la_temp);
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if(strcmp(Simb[store_temp_position].typ, "float vector") == 0 ){
+                    strcpy(char_to_transfer_temp, " [ ");
+                    char temp_la_temp[STRING_DIMENSION];
+                    
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorFloatVal_occupied  ; element_vector++){
+                        strcpy(temp_la_temp, "");
+                        if(element_vector == Simb[store_temp_position].vectorFloatVal_occupied - 1){
+                            sprintf(temp_la_temp, " %f ] ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+                        else{
+                            sprintf(temp_la_temp, " %f, ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+                        strcat(char_to_transfer_temp, temp_la_temp );
+                }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+                printf("Variabile %s stocheaza: %s\n", $3, value_to_print_temp);
+            }
+        }
+    
     ;
 
 //---------------------------------------------------------------
@@ -1124,7 +1288,7 @@ DECLARATIE_IN_OBJ:
             } 
         global = 0;
         }
-    |vartype CONSTANT ARRAY_IDENTIF{
+    | vartype CONSTANT ARRAY_IDENTIF{
             /* take out the [INT] from name */
             char save_name[STRING_DIMENSION];
             strcpy(save_name, $3);
@@ -1173,6 +1337,97 @@ DECLARATIE_IN_OBJ:
             }
             global = 0;
         }
+    | TYPEOF '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                //printf("Tipul de date pentru %s este %s.\n",$3, typeOfff($3 ));
+                getTyp($3, type_to_print_temp);
+                printf("Tipul de date pentru %s este %s.\n",$3, type_to_print_temp);
+            }
+        }
+    | EVAL '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                char char_to_transfer_temp[STRING_DIMENSION];
+                getTyp($3, type_to_print_temp);
+                char value_to_print_temp[STRING_DIMENSION];
+                
+                if (strcmp(Simb[store_temp_position].typ, "int") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %d ", Simb[store_temp_position].intVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "bool") == 0) {
+                    if(Simb[store_temp_position].boolVal == true){
+                        strcpy(char_to_transfer_temp, " true ");
+                    }
+                    else{
+                        strcpy(char_to_transfer_temp, " false");
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "float") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %f ", Simb[store_temp_position].floatVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+                
+                if (strcmp(Simb[store_temp_position].typ, "string") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].stingVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "char") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].charVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                /* arrays */
+                if(strcmp(Simb[store_temp_position].typ, "int vector") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", " [ ");
+                    printf("Simb[store_temp_position].vectorIntVal_occupied: %d", Simb[store_temp_position].vectorIntVal_occupied);
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorIntVal_occupied  ; element_vector++){
+                        if(element_vector == Simb[store_temp_position].vectorIntVal_occupied - 1){
+                            sprintf(char_to_transfer_temp, " %d ]", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+                        else{
+                            sprintf(char_to_transfer_temp, " %d, ", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if(strcmp(Simb[store_temp_position].typ, "float vector") == 0 ){
+                    strcpy(char_to_transfer_temp, " [ ");
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorFloatVal_occupied  ; element_vector++){
+                        if(element_vector == Simb[store_temp_position].vectorFloatVal_occupied - 1){
+                            sprintf(char_to_transfer_temp, " %f ] ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+                        else{
+                            sprintf(char_to_transfer_temp, " %f, ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+                printf("Variabile %s stocheaza: %s\n", $3, value_to_print_temp);
+            }
+        }
+    
     
 ;
 //---------------------------------------------------------------
@@ -1368,16 +1623,18 @@ DECLARATIE:
         }
     | IDENTIF ASSIGN INT_NUM{
         int k = verifdecl($1);
+        int store_temp_position = verifdecl($1);
         if(verifdecl($1)==-1){
             printf("Variabila nu a fost declarata deja. Eroare la linia :%d \n", yylineno);
             yyerror("eroare");
             }
         else{
-            //declarare($2, $1, global, 0);
-            if(Simb[k].constant == 1){
-                printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[k].nume, yylineno);
-                yyerror("eroare");
-            }else{
+            if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
+                }
+            else{
+                //declarare($2, $1, global, 0);
                 initializareINT($1, $3);
                 }
             }
@@ -1458,18 +1715,23 @@ DECLARATIE:
                 yyerror("eroare");
             }
             else{
-                /* check the vector dimensions */
-                if(strcmp(Simb[store_temp_position].typ, "int vector") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
-                }
-                else{
-                    if($3<0 || $3>(STRING_DIMENSION-1) || $3> Simb[store_temp_position].vectorIntVal_occupied){
-                        printf("Dimnesiunea %d nu este conforma pentru variabila %s. Eroare la linia :%d \n", $3, Simb[store_temp_position].nume,  yylineno);
-                        yyerror("eroare");
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
+                }else{
+                    /* check the vector dimensions */
+                    if(strcmp(Simb[store_temp_position].typ, "int vector") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        updateINTarray($1, $6, $3 );
-                        //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        if($3<0 || $3>(STRING_DIMENSION-1) || $3> Simb[store_temp_position].vectorIntVal_occupied){
+                            printf("Dimnesiunea %d nu este conforma pentru variabila %s. Eroare la linia :%d \n", $3, Simb[store_temp_position].nume,  yylineno);
+                            yyerror("eroare");
+                        }
+                        else{
+                            updateINTarray($1, $6, $3 );
+                            //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        }
                     }
                 }
             }
@@ -1482,18 +1744,23 @@ DECLARATIE:
                 yyerror("eroare");
             }
             else{
-                /* check the vector dimensions */
-                if(strcmp(Simb[store_temp_position].typ, "float vector") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
-                }
-                else{
-                    if($3<0 || $3>(STRING_DIMENSION-1)){
-                        printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
-                        yyerror("eroare");
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
+                }else{
+                    /* check the vector dimensions */
+                    if(strcmp(Simb[store_temp_position].typ, "float vector") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        updateFLOATarray($1, $6, $3);
-                        //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        if($3<0 || $3>(STRING_DIMENSION-1)){
+                            printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                            yyerror("eroare");
+                        }
+                        else{
+                            updateFLOATarray($1, $6, $3);
+                            //printf("Pozitia max din vector nume %s este acum: %d. Pozitia trimisa acum: %d\n", Simb[store_temp_position].nume, Simb[store_temp_position].vectorIntVal_occupied, $3);
+                        }
                     }
                 }
             }
@@ -1506,26 +1773,32 @@ DECLARATIE:
                 yyerror("eroare");
             }
             else{
-                /* check type */
-                if(strcmp(Simb[store_temp_position].typ, "string") != 0){
-                    printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
+                if(Simb[store_temp_position].constant == 1){
+                    printf("Variabila %s este de tip constant! Nu poate fi suprascrisa. Eroare la linia :%d \n", Simb[store_temp_position].nume, yylineno);
+                    yyerror("eroare");
                 }
                 else{
-                    /* check dimension */
-                    if($3<0 || $3>(STRING_DIMENSION-1) || $3 > strlen(Simb[store_temp_position].stingVal)){
-                        printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                    /* check type */
+                    if(strcmp(Simb[store_temp_position].typ, "string") != 0){
+                        printf("Variabila %s nu este de tip string. Eroare la linia :%d \n", $1,  yylineno);
                     }
                     else{
-                        char get_input_temp[STRING_DIMENSION];
-                        strcpy(get_input_temp, $6);
-                        //input as : 'c'
-                        Simb[store_temp_position].stingVal[$3] = get_input_temp[1];
+                        /* check dimension */
+                        if($3<0 || $3>(STRING_DIMENSION-1) || $3 > strlen(Simb[store_temp_position].stingVal)){
+                            printf("Dimnesiunea %d nu este conforma. Eroare la linia :%d \n", $3,  yylineno);
+                            }
+                        else{
+                            char get_input_temp[STRING_DIMENSION];
+                            strcpy(get_input_temp, $6);
+                            //input as : 'c'
+                            Simb[store_temp_position].stingVal[$3] = get_input_temp[1];
 
-                        //flag de initializat
-                        Simb[store_temp_position].init = 1;
+                            //flag de initializat
+                            Simb[store_temp_position].init = 1;
+                            }
+                        }
                     }
                 }
-            }
             global = 0;
         }
     | vartype CONSTANT IDENTIF ASSIGN INT_NUM{
@@ -1589,7 +1862,117 @@ DECLARATIE:
             } 
         global = 0;
         }
-    |
+    | TYPEOF '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                //printf("Tipul de date pentru %s este %s.\n",$3, typeOfff($3 ));
+                getTyp($3, type_to_print_temp);
+                printf("Tipul de date pentru %s este %s.\n",$3, type_to_print_temp);
+            }
+        }
+    | EVAL '(' IDENTIF ')'{
+            int store_temp_position = verifdecl($3);
+            if(store_temp_position ==-1){
+                printf("Variabila %s nu a fost declarata deja. Eroare la linia :%d \n", $3,  yylineno);
+                yyerror("eroare");
+            }
+            else{
+                char type_to_print_temp[STRING_DIMENSION];
+                char char_to_transfer_temp[STRING_DIMENSION];
+                getTyp($3, type_to_print_temp);
+                char value_to_print_temp[STRING_DIMENSION];
+
+                /* class or struct fara nimic */
+                if (strcmp(Simb[store_temp_position].typ, "classOf") == 0 || 
+                strcmp(Simb[store_temp_position].typ, "structure") == 0 ) 
+                {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].typ);
+                    strcpy(value_to_print_temp, "Tipul: ");
+                    strcat(value_to_print_temp, char_to_transfer_temp);
+                    strcat(value_to_print_temp, " .Prin urmare, nu poate fi afisata o valoare.");
+                }
+                
+                if (strcmp(Simb[store_temp_position].typ, "int") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %d ", Simb[store_temp_position].intVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "bool") == 0) {
+                    if(Simb[store_temp_position].boolVal == true){
+                        strcpy(char_to_transfer_temp, " true ");
+                    }
+                    else{
+                        strcpy(char_to_transfer_temp, " false");
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "float") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %f ", Simb[store_temp_position].floatVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp);
+                }
+                
+                if (strcmp(Simb[store_temp_position].typ, "string") == 0) {
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %f ", Simb[store_temp_position].stingVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if (strcmp(Simb[store_temp_position].typ, "char") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", Simb[store_temp_position].charVal);
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                /* arrays */
+                if(strcmp(Simb[store_temp_position].typ, "int vector") == 0 ){
+                    strcpy(char_to_transfer_temp, "");
+                    sprintf(char_to_transfer_temp, " %s ", " [ ");
+                    char temp_la_temp[STRING_DIMENSION];
+                    
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorIntVal_occupied  ; element_vector++){
+                        strcpy(temp_la_temp, "");
+                        if(element_vector == Simb[store_temp_position].vectorIntVal_occupied - 1){
+                            sprintf(temp_la_temp, " %d ]", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+                        else{
+                            sprintf(temp_la_temp, " %d, ", Simb[store_temp_position].vectorIntVal[element_vector]);
+                        }
+
+                        strcat(char_to_transfer_temp, temp_la_temp );
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+
+                if(strcmp(Simb[store_temp_position].typ, "float vector") == 0 ){
+                    strcpy(char_to_transfer_temp, " [ ");
+                    char temp_la_temp[STRING_DIMENSION];
+                    
+                    for(int element_vector = 0; element_vector < Simb[store_temp_position].vectorFloatVal_occupied  ; element_vector++){
+                        strcpy(temp_la_temp, "");
+                        if(element_vector == Simb[store_temp_position].vectorFloatVal_occupied - 1){
+                            sprintf(temp_la_temp, " %f ] ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+                        else{
+                            sprintf(temp_la_temp, " %f, ", Simb[store_temp_position].vectorFloatVal[element_vector]);
+                        }
+
+                        strcat(char_to_transfer_temp, temp_la_temp );
+                    }
+                    strcpy(value_to_print_temp, char_to_transfer_temp );
+                }
+                printf("Variabile %s stocheaza: %s\n", $3, value_to_print_temp);
+            }
+        }
+    
     ;
 
 

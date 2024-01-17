@@ -30,11 +30,23 @@ qqr.now <- "false";
 text [ 1 ] <- 'r';
 qqr.BLLA [ 1 ] <- 33;
 vctor [ 3 ] <- 4;
-qqr.FLOR [ 7 ] <- 1.11;
+qqr.FLOR [ 7 ] <- 3.0;
 
 begin_program
 
-bool blvctr[3];
+aa <- 5;
+rr <- 7.7;
+typeof ( aa );
+typeof (qqr.now);
+typeof (qqr);
+typeof (vctor);
+typeof (qqr.FLOR);
+
+eval ( aa );
+eval ( qqr.FLOR);
+qqr.FLOR [ 3 ] <- 1111.1;
+eval ( qqr.FLOR);
+
 
 end_program
 
@@ -44,3 +56,7 @@ classOf clsff {
     private ::
         string aquarium;
 };
+
+
+typeof ( clsff );
+eval ( clsff );
