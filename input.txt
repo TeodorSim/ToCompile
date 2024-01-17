@@ -1,12 +1,11 @@
 int aa <- 100;
-int b <- 15;
 
 float constant e <- 7.5;
 float rr <- e;
 e <- 3.3;
 string text <- "asta e";
-char c <- 'a';
-char m <- c;
+char q <- 'a';
+char m <- q;
 
 bool f <- "true";
 
@@ -34,13 +33,14 @@ qqr.FLOR [ 7 ] <- 3.0;
 
 begin_program
 
-aa <- 5;
 rr <- 7.7;
 typeof ( aa );
 typeof (qqr.now);
 typeof (qqr);
 typeof (vctor);
 typeof (qqr.FLOR);
+
+aa <- 10*13 - 1;
 
 eval ( aa );
 eval ( qqr.FLOR);
